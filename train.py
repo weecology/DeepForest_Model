@@ -22,7 +22,7 @@ def pretraining(deepforest, BASE_PATH):
                            comet_experiment=comet_experiment)
     
     if not deepforest_model.config["validation_annotations"] == "None":
-        mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"])
+        mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"], comet_experiment=comet_experiment)
         comet_experiment.log_metric("mAP", mAP)
     
     #retrain model based on hand annotation crops, assign the weights from pretraining model, multi-gpu model weights are split.
@@ -57,7 +57,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     
     #Evaluate benchmark data as generator
     if not deepforest_model.config["validation_annotations"] == "None":
-        mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"])
+        mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"], comet_experiment=comet_experiment)
         comet_experiment.log_metric("mAP", mAP)
         
 if __name__=="__main__":
