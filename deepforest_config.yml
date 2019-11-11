@@ -1,0 +1,18 @@
+#Config file for DeepForest
+
+#Train Settings
+batch_size: 20
+weights: None
+backbone: resnet50
+image-min-side: 800
+multi-gpu: 5
+epochs: 1
+validation_annotations: /evaluation/RGB/benchmark_annotations.csv
+
+#Keras generator methods
+multiprocessing: False 
+workers: 1
+max_queue_size: 100
+
+#save snapshot?
+save-snapshot: False
