@@ -16,7 +16,7 @@ module load tensorflow/1.14.0
 
 export PATH=${PATH}:/home/b.weinstein/miniconda/envs/DeepForest/bin/
 export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda/envs/DeepForest/lib/python3.7/site-packages/
-cd /home/b.weinstein/NeonTreeEvaluation_analysis/Weinstein_unpublished/
+cd /home/b.weinstein/DeepForest_Model/Weinstein_unpublished/
 
 #comet debug
 export COMET_LOGGING_FILE=/home/b.weinstein/logs/comet.log
