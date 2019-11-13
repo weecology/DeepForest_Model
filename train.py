@@ -50,7 +50,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     # create a dir for the run
     save_path = BASE_PATH + "snapshots/{}/".format(timestamp)
     os.mkdir(save_path)
-    deepforest.config["save_path"] = save_path
+    deepforest_model.config["save_path"] = save_path
     
     ##Fine tune model
     list_of_tfrecords = glob.glob(BASE_PATH + "hand_annotations/tfrecords/*.tfrecord")
