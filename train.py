@@ -1,10 +1,12 @@
 #DeepForest 19 site model
-from comet_ml import Experiment
+import os
 import glob
+from comet_ml import Experiment
+from gc import collect
 from datetime import datetime
+
 from deepforest import deepforest
 from deepforest import tfrecords
-from gc import collect
 
 def pretraining(deepforest, BASE_PATH):
     # import comet_ml logger
