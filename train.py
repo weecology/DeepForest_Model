@@ -39,11 +39,16 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest", workspace="bw4sz")
     
-    deepforest_model.config["epochs"] = 100
+    deepforest_model.config["epochs"] = 20
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Finetuning")
     comet_experiment.log_parameter("timestamp",timestamp)
     comet_experiment.log_parameter("input_type",input_type)
+    
+    # create a dir for the run
+    save_path = BASE_PATH + "snapshots/{}/".format(timestamp)
+    os.mkdir(save_path)
+    deepforest.config["save_path"] = save_path
     
     ##Fine tune model
     list_of_tfrecords = glob.glob(BASE_PATH + "hand_annotations/tfrecords/*.tfrecord")
@@ -59,6 +64,10 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     if not deepforest_model.config["validation_annotations"] == "None":
         mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"], comet_experiment=comet_experiment)
         comet_experiment.log_metric("mAP", mAP)
+        
+        #save predictions 
+        boxes = deepforest_model.predict_generator(annotations = deepforest_model.config["validation_annotations"])
+        boxes.to_csv(save_path + "submission.csv", index=False)
         
 if __name__=="__main__":
     

@@ -16,3 +16,4 @@ max_queue_size: 100
 
 #save snapshot?
 save-snapshot: False
+save_path: snapshots/
