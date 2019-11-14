@@ -6,7 +6,6 @@ from gc import collect
 from datetime import datetime
 
 from deepforest import deepforest
-from deepforest import tfrecords
 
 def pretraining(deepforest, BASE_PATH):
     # import comet_ml logger
