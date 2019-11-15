@@ -40,7 +40,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest", workspace="bw4sz")
     
-    deepforest_model.config["epochs"] = 1
+    deepforest_model.config["epochs"] = 20
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Finetuning")
     comet_experiment.log_parameter("timestamp",timestamp)
@@ -93,7 +93,7 @@ if __name__=="__main__":
     #deepforest_model = pretraining(deepforest_model, BASE_PATH)
     
     #Optionally set pretraining weights if not running concurrently.
-    deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/pretraining_weights_20191110_190026.h5"
+    #deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/pretraining_weights_20191110_190026.h5"
 
     #Fine tune on top of pretraining records
     deepforest_model = finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH)

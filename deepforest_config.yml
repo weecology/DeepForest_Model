@@ -5,21 +5,22 @@
 
 ### Training
 ### Batch size. If multi-gpu is > 1, this is the total number of images per batch across all GPUs. Must be evenly divisible by multi-gpu. 
-batch_size: 1 
+batch_size: 30
 ### Model weights to load before training. From keras.model.save_weights()
-weights: None
+weights: /home/b.weinstein/DeepForest_Model/snapshots/resnet50_csv_08.h5
 ### Retinanet backbone. See the keras-retinanet repo for options. Only resnet50 has been well explored.
 backbone: resnet50
 ### Resize images to min size. Retinanet anchors may need to be remade if signficantly reducing image size.
 image-min-side: 800
 ##Number of GPUs to train
-multi-gpu: 3
+multi-gpu: 5
 #Number of full cycles of the input data to train
-epochs: 1
+epochs: 10
 #Validation annotations. If training using fit_generator, these will be evaluated as a callback at the end of each epoch.
-validation_annotations: None
+validation_annotations: evaluation/RGB/benchmark_annotations.csv
 ###Freeze layers. Used for model finetuning, freeze the bottom n layers.
-freeze_layers: 10
+freeze_layers: 0
+freeze_resnet: False
 
 #Keras generator methods
 multiprocessing: False 
@@ -31,4 +32,4 @@ max_queue_size: 10
 save-snapshot: False
 #Save directory for images and snapshots
 save_path: snapshots/
-
+snapshot_path: snapshots/
