@@ -21,6 +21,10 @@ validation_annotations: None
 ###Freeze layers. Used for model finetuning, freeze the bottom n layers.
 freeze_layers: 10
 
+###Evaluation
+###Score threshold, above which bounding boxes are included in evaluation predictions
+score_threshold: 0.05
+
 #Keras generator methods
 multiprocessing: False 
 workers: 1
