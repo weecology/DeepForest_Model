@@ -71,6 +71,11 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
         boxes = deepforest_model.predict_generator(annotations = deepforest_model.config["validation_annotations"], score_threshold = deepforest_model.config["score_threshold"] )
         boxes.to_csv(save_path + "submission.csv", index=False)
         
+        #Compute training mAP
+        #Don't upload training images, too many.
+        deepforest_model.config["save_path"] = None
+        training_mAP = deepforest_model.evaluate_generator(annotations = BASE_PATH + "hand_annotations/crops/hand_annotations.csv", comet_experiment=comet_experiment, score_threshold = deepforest_model.config["score_threshold"] )
+        comet_experiment.log_metric("Training mAP", training_mAP)        
 if __name__=="__main__":
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
