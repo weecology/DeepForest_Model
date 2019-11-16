@@ -16,4 +16,4 @@ export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda/envs/DeepForest/lib/
 cd /home/b.weinstein/DeepForest_Model/Weinstein_unpublished/
 
 python generate.py
-python GenerateAnchors.py
+#python GenerateAnchors.py

@@ -206,13 +206,13 @@ if __name__=="__main__":
         dask_client = start_dask_cluster(number_of_workers=5, mem_size="15GB")
     
     #Run Benchmark
-    #generate_benchmark(BENCHMARK_PATH)
+    generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
     #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
     
     #Run Training
-    generate_training(DEBUG, BASE_PATH, dask_client)
+    #generate_training(DEBUG, BASE_PATH, dask_client)
     
 
     

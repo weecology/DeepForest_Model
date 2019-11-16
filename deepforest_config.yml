@@ -21,8 +21,6 @@ validation_annotations: evaluation/RGB/benchmark_annotations.csv
 ###Freeze layers. Used for model finetuning, freeze the bottom n layers.
 freeze_layers: 0
 freeze_resnet: False
-random_transform: False
-
 ###Evaluation
 ###Score threshold, above which bounding boxes are included in evaluation predictions
 score_threshold: 0.05
@@ -31,7 +29,7 @@ score_threshold: 0.05
 multiprocessing: False 
 workers: 1
 max_queue_size: 10
-random_transform: False
+random_transform: True
 
 #save snapshot and images
 ###Whether to save snapshots at the end of each epoch
