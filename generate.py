@@ -212,7 +212,7 @@ if __name__=="__main__":
     #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
     
     #Run Training
-    #generate_training(DEBUG, BASE_PATH, dask_client)
+    generate_training(DEBUG, BASE_PATH, dask_client)
     
 
     
