@@ -15,6 +15,11 @@ def pretraining(deepforest, BASE_PATH):
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Pretraining")
     comet_experiment.log_parameter("timestamp",timestamp)
+    # create a dir for the run
+    save_path = BASE_PATH + "snapshots/{}/".format(timestamp)
+    os.mkdir(save_path)
+    deepforest_model.config["save_path"] = save_path
+    deepforest_model.config["snapshot_path"] = save_path
     
     list_of_tfrecords = glob.glob(BASE_PATH + "pretraining/tfrecords/*.tfrecord")
     deepforest_model.train(annotations=BASE_PATH + "pretraining/crops/pretraining.csv",
