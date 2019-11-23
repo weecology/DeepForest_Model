@@ -68,7 +68,7 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     cropped_annotations = [ ]
     
     if dask_client:
-        futures = dask_client.map(preprocess.split_training_raster,
+        futures = dask_client.map(preprocess.split_raster,
                                   raster_list,
                                   annotations_file=BASE_PATH + "pretraining/pretraining_annotations.csv",
                                   base_dir=BASE_PATH + "pretraining/crops/",
@@ -85,7 +85,7 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
                     print("future {} failed with {}".format(future, e))
     else:
         for raster in raster_list:
-            annotations_df= preprocess.split_training_raster(path_to_raster=raster,
+            annotations_df= preprocess.split_raster(path_to_raster=raster,
                                              annotations_file=BASE_PATH + "pretraining/pretraining_annotations.csv",
                                              base_dir=BASE_PATH + "pretraining/crops/",
                                              patch_size=400,
@@ -137,7 +137,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None):
     cropped_annotations = [ ]
     
     if dask_client:
-        futures = dask_client.map(preprocess.split_training_raster,
+        futures = dask_client.map(preprocess.split_raster,
                                   raster_list,
                                   annotations_file=BASE_PATH + "hand_annotations/hand_annotations.csv",
                                   base_dir=BASE_PATH + "hand_annotations/crops/",
@@ -156,7 +156,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None):
 
     else:
         for raster in raster_list:
-            annotations_df= preprocess.split_training_raster(path_to_raster=raster,
+            annotations_df= preprocess.split_raster(path_to_raster=raster,
                                              annotations_file=BASE_PATH + "hand_annotations/hand_annotations.csv",
                                              base_dir=BASE_PATH + "hand_annotations/crops/",
                                              patch_size=400,
