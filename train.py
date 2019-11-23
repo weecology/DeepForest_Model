@@ -101,7 +101,7 @@ if __name__=="__main__":
         deepforest_model.config["validation_annotations"] = BENCHMARK_PATH + deepforest_model.config["validation_annotations"]
 
     #Run pretraining records
-    deepforest_model = pretraining(deepforest_model, BASE_PATH)
+    #deepforest_model = pretraining(deepforest_model, BASE_PATH)
     
     #Optionally set pretraining weights if not running concurrently.
     #deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/pretraining_weights_20191110_190026.h5"

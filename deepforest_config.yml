@@ -5,17 +5,17 @@
 
 ### Training
 ### Batch size. If multi-gpu is > 1, this is the total number of images per batch across all GPUs. Must be evenly divisible by multi-gpu. 
-batch_size: 20
+batch_size: 18
 ### Model weights to load before training. From keras.model.save_weights()
-weights: snapshots/resnet50_csv_01.h5
+weights: /orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/20191119_115149/resnet50_csv_03.h5
 ### Retinanet backbone. See the keras-retinanet repo for options. Only resnet50 has been well explored.
 backbone: resnet50
 ### Resize images to min size. Retinanet anchors may need to be remade if signficantly reducing image size.
 image-min-side: 800
 ##Number of GPUs to train
-multi-gpu: 4
+multi-gpu: 3
 #Number of full cycles of the input data to train
-epochs: 1
+epochs: 10
 #Validation annotations. If training using fit_generator, these will be evaluated as a callback at the end of each epoch.
 validation_annotations: evaluation/RGB/benchmark_annotations.csv
 ###Freeze layers. Used for model finetuning, freeze the bottom n layers.
@@ -33,7 +33,7 @@ random_transform: False
 
 #save snapshot and images
 ###Whether to save snapshots at the end of each epoch
-save-snapshot: True
+save-snapshot: False
 #Save directory for images and snapshots
 save_path: snapshots/
 snapshot_path: snapshots/
