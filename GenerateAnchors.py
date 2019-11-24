@@ -30,12 +30,6 @@ def generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE,config,dask_client):
         annotations_file= BASE_PATH + "pretraining/crops/pretraining.csv"
         df = pd.read_csv(annotations_file, names=["image_path","xmin","ymin","xmax","ymax","label"])
         
-        #force dtype
-        df.xmin = df.xmin.astype(int)
-        df.ymin = df.ymin.astype(int)
-        df.xmax = df.xmax.astype(int)
-        df.ymax = df.ymax.astype(int)
-        
         #Randomize rows
         df = df.sample(frac=1)
         
@@ -95,19 +89,13 @@ def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_cli
         annotations_file= BASE_PATH + "hand_annotations/crops/hand_annotations.csv"
         df = pd.read_csv(annotations_file, names=["image_path","xmin"," ymin","xmax","ymax","label"])
         
-        #force dtype
-        df.xmin = df.xmin.astype(pd.Int64Dtype())
-        df.ymin = df.ymin.astype(pd.Int64Dtype())
-        df.xmax = df.xmax.astype(pd.Int64Dtype())
-        df.ymax = df.ymax.astype(pd.Int64Dtype())
-        
         #Randomize rows
         df = df.sample(frac=1)
         
         #split pandas frame into chunks
         images = df.image_path.unique()
         indices = np.arange(len(images))
-        size=500
+        size = 500
         
         chunk_list = [ ]
         
@@ -206,9 +194,9 @@ if __name__=="__main__":
     
     #Set paths
     if DEBUG:
-        BASE_PATH = "/Users/ben/Documents/NeonTreeEvaluation_analysis/Weinstein_unpublished/"
-        FILEPATH = "/Users/ben/Documents/NeonTreeEvaluation_analysis/Weinstein_unpublished/"
-        BENCHMARK_PATH = "/Users/ben/Documents/NeonTreeEvaluation/"        
+        BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
+        FILEPATH = "/Users/ben/Documents/DeepForest_Model/"
+        BENCHMARK_PATH = "/Users/ben/Documents/DeepForest_Model/"        
         dask_client = None
     else:
         BASE_PATH = "/orange/ewhite/b.weinstein/DeepForest_Model/"
@@ -219,6 +207,6 @@ if __name__=="__main__":
     #Read config
     config = read_config()
  
-    #generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
+    generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     #generate_benchmark(DEBUG, BENCHMARK_PATH, BENCHMARK_PATH, SIZE, config, dask_client)

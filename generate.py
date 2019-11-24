@@ -202,9 +202,9 @@ if __name__=="__main__":
     DEBUG = False
   
     if DEBUG:
-        BASE_PATH = "/Users/ben/Documents/NeonTreeEvaluation_analysis/Weinstein_unpublished/"
-        DATA_PATH = "/Users/ben/Documents/NeonTreeEvaluation_analysis/Weinstein_unpublished/"
-        BENCHMARK_PATH = "/Users/ben/Documents/NeonTreeEvaluation/"
+        BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
+        DATA_PATH = "/Users/ben/Documents/DeepForest_Model/"
+        BENCHMARK_PATH = "/Users/ben/Documents/DeepForest_Model/"
         dask_client = None
     else:
         BASE_PATH = "/orange/ewhite/b.weinstein/DeepForest_Model/"
