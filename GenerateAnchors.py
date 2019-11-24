@@ -87,7 +87,7 @@ def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_cli
         
         #Collect annotation files for each tile
         annotations_file= BASE_PATH + "hand_annotations/crops/hand_annotations.csv"
-        df = pd.read_csv(annotations_file, names=["image_path","xmin","ymin","xmax","ymax","label"])
+        df = pd.read_csv(annotations_file, names=["image_path","xmin"," ymin","xmax","ymax","label"])
         
         #Randomize rows
         df = df.sample(frac=1)
