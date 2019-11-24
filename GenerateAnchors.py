@@ -96,10 +96,10 @@ def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_cli
         df = pd.read_csv(annotations_file, names=["image_path","xmin"," ymin","xmax","ymax","label"])
         
         #force dtype
-        df.xmin = df.xmin.astype(int)
-        df.ymin = df.ymin.astype(int)
-        df.xmax = df.xmax.astype(int)
-        df.ymax = df.ymax.astype(int)
+        df.xmin = df.xmin.astype(pd.Int64Dtype())
+        df.ymin = df.ymin.astype(pd.Int64Dtype())
+        df.xmax = df.xmax.astype(pd.Int64Dtype())
+        df.ymax = df.ymax.astype(pd.Int64Dtype())
         
         #Randomize rows
         df = df.sample(frac=1)
@@ -211,9 +211,9 @@ if __name__=="__main__":
         BENCHMARK_PATH = "/Users/ben/Documents/NeonTreeEvaluation/"        
         dask_client = None
     else:
-        BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
-        FILEPATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
-        BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"            
+        BASE_PATH = "/orange/ewhite/b.weinstein/DeepForest_Model/"
+        FILEPATH = "/orange/ewhite/b.weinstein/DeepForest_Model/"
+        BENCHMARK_PATH = "/home/b.weinstein/DeepForest_Model/"            
         dask_client = start_dask_cluster(number_of_workers=15, mem_size="7GB")       
 
     #Read config
