@@ -187,7 +187,7 @@ def generate_benchmark(DEBUG, BENCHMARK_PATH, FILEPATH, SIZE, config, dask_clien
 if __name__=="__main__":
     
     #Generate anchor objects for each image and wrap in tfrecords
-    DEBUG = True
+    DEBUG = False
     
     #Number of images per tfrecord
     SIZE = 50 
