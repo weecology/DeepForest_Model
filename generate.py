@@ -124,6 +124,13 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None):
     
     #Collect hand annotations
     annotations = pd.concat(annotation_list, ignore_index=True)      
+    
+    #force dtype
+    annotations.xmin = annotations.xmin.astype(int)
+    annotations.ymin = annotations.ymin.astype(int)
+    annotations.xmax = annotations.xmax.astype(int)
+    annotations.ymax = annotations.ymax.astype(int)
+    
     annotations.to_csv(BASE_PATH + "hand_annotations/hand_annotations.csv",index=False)
     
     #Collect hand annotation tiles
