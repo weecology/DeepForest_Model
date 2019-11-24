@@ -10,7 +10,7 @@
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err
 #SBATCH --partition=gpu
-#SBATCH --gpus=5
+#SBATCH --gpus=3
 
 module load tensorflow/1.14.0
 
@@ -19,7 +19,5 @@ export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda/envs/DeepForest/lib/
 cd /home/b.weinstein/DeepForest_Model/Weinstein_unpublished/
 
 #comet debug
-export COMET_LOGGING_FILE=/home/b.weinstein/logs/comet.log
-export COMET_LOGGING_FILE_LEVEL=debug
 
 python train.py
