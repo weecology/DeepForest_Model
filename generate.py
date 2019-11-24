@@ -207,8 +207,8 @@ if __name__=="__main__":
         BENCHMARK_PATH = "/Users/ben/Documents/DeepForest_Model/"
         dask_client = None
     else:
-        BASE_PATH = "/orange/ewhite/b.weinstein/DeepForest_Model/"
-        BENCHMARK_PATH = "/home/b.weinstein/DeepForest_Model/"
+        BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
+        BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"
         DATA_PATH = "/orange/ewhite/NeonData/"        
         dask_client = start_dask_cluster(number_of_workers=50, mem_size="11GB")
     
