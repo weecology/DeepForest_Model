@@ -99,12 +99,21 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     #if DEBUG:
        #annotations = annotations[0:100]
     
-    #clean make sure no zero area boxes
-    annotations = annotations[~(annotations.xmin == annotations.xmax)]
-    annotations = annotations[~(annotations.ymin == annotations.ymax)]
+    #clean make sure non NA boxes have area greater than 2 pixels
+    blank_images = annotations[annotations.xmin==""]
+    non_blank_images = annotations[~(annotations.xmin=="")]
+    non_blank_images = non_blank_images[(non_blank_images.xmin < non_blank_images.xmax -2)]
+    non_blank_images = non_blank_images[(non_blank_images.ymin < non_blank_images.ymax -2)]
+    combined_annotations = pd.concat([blank_images, non_blank_images])
     
-    annotations.to_csv(BASE_PATH + "pretraining/crops/pretraining.csv", index=False, header=None)
-
+    #sort by image_path
+    combined_annotations.sort_values(by="image_path", axis=0, ascending=True, 
+                                    inplace=True, 
+                                    kind="quicksort", 
+                                    na_position="last")
+    
+    combined_annotations.to_csv(BASE_PATH + "pretraining/crops/pretraining.csv", index=False, header=None)
+    
 def generate_training(DEBUG, BASE_PATH, dask_client=None):
     
     #Remove previous files if needed
@@ -216,10 +225,10 @@ if __name__=="__main__":
     #generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
-    #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
+    generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
     
     #Run Training
-    generate_training(DEBUG, BASE_PATH, dask_client)
+    #generate_training(DEBUG, BASE_PATH, dask_client)
     
 
     
