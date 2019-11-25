@@ -38,6 +38,9 @@ def generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE,config,dask_client):
         
         #Randomize rows
         df = df.sample(frac=1)
+        
+        #Show head
+        df.head()
                 
         #split pandas frame into chunks
         images = df.image_path.unique()
@@ -167,10 +170,12 @@ def generate_benchmark(DEBUG, BENCHMARK_PATH, FILEPATH, SIZE, config, dask_clien
         df.xmax = df.xmax.astype(pd.Int64Dtype())
         df.ymax = df.ymax.astype(pd.Int64Dtype())
         
+        df.head()
+        
         #split pandas frame into chunks
         images = df.image_path.unique()
         indices = np.arange(len(images))
-        size=500
+        size = 500
         
         chunk_list = [ ]
         
@@ -220,11 +225,11 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         FILEPATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"            
-        dask_client = start_dask_cluster(number_of_workers=50, mem_size="7GB")       
+        dask_client = start_dask_cluster(number_of_workers=50, mem_size="6GB")       
 
     #Read config
     config = read_config()
  
-    generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
+    #generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     #generate_benchmark(DEBUG, BENCHMARK_PATH, BENCHMARK_PATH, SIZE, config, dask_client)
