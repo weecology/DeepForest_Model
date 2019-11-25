@@ -208,7 +208,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = True
+    DEBUG = False
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
@@ -228,7 +228,7 @@ if __name__=="__main__":
     generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
     
     #Run Training
-    #generate_training(DEBUG, BASE_PATH, dask_client)
+    generate_training(DEBUG, BASE_PATH, dask_client)
     
 
     

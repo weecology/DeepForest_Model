@@ -222,5 +222,5 @@ if __name__=="__main__":
     config = read_config()
  
     generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
-    #generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
+    generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     #generate_benchmark(DEBUG, BENCHMARK_PATH, BENCHMARK_PATH, SIZE, config, dask_client)
