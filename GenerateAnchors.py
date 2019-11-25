@@ -220,7 +220,7 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         FILEPATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"            
-        dask_client = start_dask_cluster(number_of_workers=50, mem_size="7GB")       
+        dask_client = start_dask_cluster(number_of_workers=60, mem_size="7GB")       
 
     #Read config
     config = read_config()
