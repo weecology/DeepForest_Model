@@ -38,9 +38,7 @@ def generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE,config,dask_client):
         
         #Randomize rows
         df = df.sample(frac=1)
-        
-        df = pd.read_csv(annotations_file, names=["image_path","xmin","ymin","xmax","ymax","label"])
-        
+                
         #split pandas frame into chunks
         images = df.image_path.unique()
         indices = np.arange(len(images))
@@ -162,6 +160,12 @@ def generate_benchmark(DEBUG, BENCHMARK_PATH, FILEPATH, SIZE, config, dask_clien
         
         #Randomize rows
         df = df.sample(frac=1)
+        
+        #enforce dtype, as there might be errors
+        df.xmin = df.xmin.astype(pd.Int64Dtype())
+        df.ymin = df.ymin.astype(pd.Int64Dtype())
+        df.xmax = df.xmax.astype(pd.Int64Dtype())
+        df.ymax = df.ymax.astype(pd.Int64Dtype())
         
         #split pandas frame into chunks
         images = df.image_path.unique()
