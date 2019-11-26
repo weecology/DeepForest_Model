@@ -65,7 +65,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
                            comet_experiment=comet_experiment)
     
     #save weights
-    deepforest_model.model.save_weights(BASE_PATH + "snapshots/finetuned_weights_{}.h5".format(timestamp))
+    deepforest_model.model.save(save_path + "finetuned_weights_{}.h5".format(timestamp))
     
     #Evaluate benchmark data as generator
     if not deepforest_model.config["validation_annotations"] == "None":
