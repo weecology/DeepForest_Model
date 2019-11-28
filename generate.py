@@ -125,7 +125,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     xmls = glob.glob(BASE_PATH + "hand_annotations/*.xml")
     annotation_list = []
     for xml in xmls:
-        annotation = utilities.xml_to_annotations(xml, BASE_PATH + "hand_annotations/")
+        annotation = utilities.xml_to_annotations(xml)
         annotation_list.append(annotation)
     
     #Collect hand annotations
@@ -194,7 +194,7 @@ def generate_benchmark(BENCHMARK_PATH):
     annotation_list = []   
     for xml_path in xmls:
         try:
-            annotation = utilities.xml_to_annotations(xml_path, BENCHMARK_PATH + "evaluation/RGB/")
+            annotation = utilities.xml_to_annotations(xml_path)
         except:
             pass
         annotation_list.append(annotation)
