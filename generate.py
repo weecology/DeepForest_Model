@@ -29,10 +29,7 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     #first column is the image path, set float to int for cells
     annotations.head()
     annotations.rename(columns={"plot_name":"image_path"},inplace=True)
-    
-    #caught one spelling error
-    annotations.image_path.replace("2019OSBS","2019_OSBS",inplace=True,regex=True)
-    
+        
     annotations.xmin = annotations.xmin.astype(int)
     annotations.ymin = annotations.ymin.astype(int)
     annotations.xmax = annotations.xmax.astype(int)
@@ -114,7 +111,7 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     
     combined_annotations.to_csv(BASE_PATH + "pretraining/crops/pretraining.csv", index=False, header=None)
     
-def generate_training(DEBUG, BASE_PATH, dask_client=None):
+def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     
     #Remove previous files if needed
     previous_files = ["hand_annotations/crops/hand_annotations.csv", "hand_annotations/hand_annotations.csv","hand_annotations/crops/classes.csv"]
@@ -158,7 +155,8 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None):
                                   annotations_file=BASE_PATH + "hand_annotations/hand_annotations.csv",
                                   base_dir=BASE_PATH + "hand_annotations/crops/",
                                   patch_size=400,
-                                  patch_overlap=0.05)
+                                  patch_overlap=0.05,
+                                  allow_empty=allow_empty)
         
         wait(futures)
     
@@ -228,7 +226,7 @@ if __name__=="__main__":
     generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
     
     #Run Training
-    generate_training(DEBUG, BASE_PATH, dask_client)
+    generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
     
 
     
