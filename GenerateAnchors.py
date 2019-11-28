@@ -228,7 +228,7 @@ if __name__=="__main__":
         dask_client = start_dask_cluster(number_of_workers=100, mem_size="6GB")       
 
     #Read config
-    config = read_config()
+    config = read_config("deepforest_config.yml")
  
     generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     #generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
