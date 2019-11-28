@@ -219,16 +219,16 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"
         DATA_PATH = "/orange/ewhite/NeonData/"        
-        dask_client = start_dask_cluster(number_of_workers=50, mem_size="11GB")
+        dask_client = start_dask_cluster(number_of_workers=80, mem_size="10GB")
     
     #Run Benchmark
-    #generate_benchmark(BENCHMARK_PATH)
+    generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
     generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
     
     #Run Training
-    generate_training(DEBUG, BASE_PATH, dask_client)
+    #generate_training(DEBUG, BASE_PATH, dask_client)
     
 
     
