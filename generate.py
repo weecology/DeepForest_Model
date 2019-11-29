@@ -12,7 +12,7 @@ from deepforest import preprocess
 from dask_utility import start_dask_cluster
 from dask.distributed import wait
 
-def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client=None):
+def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client=None, allow_empty=False):
     
     #Remove previous files if needed
     previous_files = ["pretraining/pretraining_annotations.csv","pretraining/crops/pretraining.csv","pretraining/crops/classes.csv"]
@@ -70,7 +70,8 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
                                   annotations_file=BASE_PATH + "pretraining/pretraining_annotations.csv",
                                   base_dir=BASE_PATH + "pretraining/crops/",
                                   patch_size=400,
-                                  patch_overlap=0.05)
+                                  patch_overlap=0.05,
+                                  allow_empty=allow_empty)
         
         wait(futures)
         
@@ -206,7 +207,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = False
+    DEBUG = True
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
@@ -223,7 +224,7 @@ if __name__=="__main__":
     #generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
-    generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
+    #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
     
     #Run Training
     generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
