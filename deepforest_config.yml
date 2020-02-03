@@ -23,7 +23,7 @@ freeze_layers: 0
 freeze_resnet: False
 ###Evaluation
 ###Score threshold, above which bounding boxes are included in evaluation predictions
-score_threshold: 0.05
+score_threshold: 0.1
 
 #Keras fit generator methods
 multiprocessing: False 
