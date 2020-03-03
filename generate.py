@@ -12,7 +12,7 @@ from deepforest import preprocess
 from dask_utility import start_dask_cluster
 from dask.distributed import wait
 
-def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client=None):
+def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client=None, allow_empty=False):
     
     #Remove previous files if needed
     previous_files = ["pretraining/pretraining_annotations.csv","pretraining/crops/pretraining.csv","pretraining/crops/classes.csv"]
@@ -53,6 +53,10 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     annotations.to_csv(BASE_PATH + "pretraining/pretraining_annotations.csv", index=False)
     
     #Find training tiles and crop into overlapping windows for detection
+    
+    #HOTFIX!, the current detection paths are not relative.
+    annotations["image_path"] =  annotations["image_path"].apply(lambda x: os.path.basename(x))
+    
     #Find all tifs available
     image_index = annotations.image_path.unique()        
     all_tifs = glob.glob(DATA_PATH + "**/*.tif", recursive=True)
@@ -70,7 +74,8 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
                                   annotations_file=BASE_PATH + "pretraining/pretraining_annotations.csv",
                                   base_dir=BASE_PATH + "pretraining/crops/",
                                   patch_size=400,
-                                  patch_overlap=0.05)
+                                  patch_overlap=0.05,
+                                  allow_empty=allow_empty)
         
         wait(futures)
         
@@ -217,13 +222,13 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"
         DATA_PATH = "/orange/ewhite/NeonData/"        
-        dask_client = start_dask_cluster(number_of_workers=20, mem_size="10GB")
+        dask_client = start_dask_cluster(number_of_workers=60, mem_size="11GB")
     
     #Run Benchmark
     #generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
-    #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client)
+    #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
     
     #Run Training
     generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
