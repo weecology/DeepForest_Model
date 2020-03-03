@@ -57,7 +57,8 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     image_index = annotations.image_path.unique()        
     all_tifs = glob.glob(DATA_PATH + "**/*.tif", recursive=True)
     tif_basename = [os.path.basename(x) for x in all_tifs]
-    selected_indices = [tif_basename.index(x) for x in image_index if x in tif_basename ]
+    image_basename = [os.path.basename(x) for x in image_index]
+    selected_indices = [tif_basename.index(x) for x in image_basename if x in tif_basename ]
     raster_list = np.array(all_tifs)[selected_indices]
         
     print("There are {} tiles to process".format(len(raster_list)))
@@ -207,7 +208,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = True
+    DEBUG = False
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
@@ -218,7 +219,7 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"
         DATA_PATH = "/orange/ewhite/NeonData/"        
-        dask_client = start_dask_cluster(number_of_workers=50, mem_size="11GB")
+        dask_client = start_dask_cluster(number_of_workers=60, mem_size="11GB")
     
     #Run Benchmark
     #generate_benchmark(BENCHMARK_PATH)
