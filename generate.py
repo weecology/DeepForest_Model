@@ -53,12 +53,15 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     annotations.to_csv(BASE_PATH + "pretraining/pretraining_annotations.csv", index=False)
     
     #Find training tiles and crop into overlapping windows for detection
+    
+    #HOTFIX!, the current detection paths are not relative.
+    annotations["image_path"] =  annotations["image_path"].apply(lambda x: os.path.basename(x))
+    
     #Find all tifs available
     image_index = annotations.image_path.unique()        
     all_tifs = glob.glob(DATA_PATH + "**/*.tif", recursive=True)
     tif_basename = [os.path.basename(x) for x in all_tifs]
-    image_basename = [os.path.basename(x) for x in image_index]
-    selected_indices = [tif_basename.index(x) for x in image_basename if x in tif_basename ]
+    selected_indices = [tif_basename.index(x) for x in image_index if x in tif_basename ]
     raster_list = np.array(all_tifs)[selected_indices]
         
     print("There are {} tiles to process".format(len(raster_list)))
