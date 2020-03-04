@@ -50,12 +50,13 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     #drop column
     annotations.drop(columns=['geo_index'], inplace=True)
     
+    #HOTFIX!, the current detection paths are not relative.
+    annotations["image_path"] =  annotations["image_path"].apply(lambda x: os.path.basename(x))    
     annotations.to_csv(BASE_PATH + "pretraining/pretraining_annotations.csv", index=False)
     
     #Find training tiles and crop into overlapping windows for detection
     
-    #HOTFIX!, the current detection paths are not relative.
-    annotations["image_path"] =  annotations["image_path"].apply(lambda x: os.path.basename(x))
+
     
     #Find all tifs available
     image_index = annotations.image_path.unique()        
