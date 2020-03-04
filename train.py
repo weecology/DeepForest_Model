@@ -24,7 +24,7 @@ def pretraining(deepforest, BASE_PATH):
     list_of_tfrecords = glob.glob(BASE_PATH + "pretraining/tfrecords/*.tfrecord")
     deepforest_model.train(annotations=BASE_PATH + "pretraining/crops/pretraining.csv",
                            input_type="tfrecord",
-                           list_of_tfrecords=list_of_tfrecords,
+                           list_of_tfrecords=list_of_tfrecords[0:10],
                            comet_experiment=comet_experiment)
     
     if not deepforest_model.config["validation_annotations"] == "None":
@@ -45,7 +45,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest", workspace="bw4sz")
     
-    deepforest_model.config["epochs"] = 10
+    deepforest_model.config["epochs"] = 15
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Finetuning")
     comet_experiment.log_parameter("timestamp",timestamp)
@@ -101,7 +101,7 @@ if __name__=="__main__":
         deepforest_model.config["validation_annotations"] = BENCHMARK_PATH + deepforest_model.config["validation_annotations"]
 
     #Run pretraining records
-    #deepforest_model = pretraining(deepforest_model, BASE_PATH)
+    deepforest_model = pretraining(deepforest_model, BASE_PATH)
     
     #Optionally set pretraining weights if not running concurrently.
     #deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/pretraining_weights_20191110_190026.h5"

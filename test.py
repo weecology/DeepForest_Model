@@ -5,6 +5,7 @@ import keras
 from keras import backend as K
 from keras import layers
 from keras.callbacks import Callback
+from keras.utils import multi_gpu_model
 
 from tensorflow.contrib.learn.python.learn.datasets import mnist
 
@@ -80,7 +81,7 @@ sess = K.get_session()
 
 batch_size = 100
 batch_shape = (batch_size, 28, 28, 1)
-epochs = 5
+epochs = 1000
 num_classes = 10
 
 # The capacity variable controls the maximum queue size
@@ -126,6 +127,8 @@ y_batch_shape = y_train_batch.get_shape().as_list()
 model_input = layers.Input(tensor=x_train_batch)
 model_output = cnn_layers(model_input)
 train_model = keras.models.Model(inputs=model_input, outputs=model_output)
+
+train_model = multi_gpu_model(train_model, gpus=2)
 
 # Pass the target tensor `y_train_batch` to `compile`
 # via the `target_tensors` keyword argument:
@@ -188,7 +191,7 @@ x_test_inp = layers.Input(shape=(x_test.shape[1:]))
 test_out = cnn_layers(x_test_inp)
 test_model = keras.models.Model(inputs=x_test_inp, outputs=test_out)
 
-test_model.load_weights('saved_wt.h5')
+#test_model.load_weights('saved_wt.h5')
 test_model.compile(optimizer='rmsprop',
                    loss='categorical_crossentropy',
                    metrics=['accuracy'])
