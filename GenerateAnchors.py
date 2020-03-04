@@ -230,6 +230,6 @@ if __name__=="__main__":
     #Read config
     config = read_config("deepforest_config.yml")
  
-    generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
-    #generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
+    #generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
+    generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     #generate_benchmark(DEBUG, BENCHMARK_PATH, BENCHMARK_PATH, SIZE, config, dask_client)

@@ -229,10 +229,10 @@ if __name__=="__main__":
     #generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
-    #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
+    generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
     
     #Run Training
-    generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
+    #generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
     
 
     
