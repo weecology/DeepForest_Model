@@ -225,7 +225,7 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         FILEPATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"            
-        dask_client = start_dask_cluster(number_of_workers=70, mem_size="6GB")       
+        dask_client = start_dask_cluster(number_of_workers=70, mem_size="5GB")       
 
     #Read config
     config = read_config("deepforest_config.yml")

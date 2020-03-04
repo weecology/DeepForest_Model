@@ -16,9 +16,8 @@ module load tensorflow/1.14.0
 
 export PATH=${PATH}:/home/b.weinstein/miniconda3/envs/crowns/bin/
 export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/crowns/lib/python3.7/site-packages/
-export LD_LIBRARY_PATH=/home/b.weinstein/miniconda3/envs/crowns/lib/:${LD_LIBRARY_PATH}
 
-cd /home/b.weinstein/DeepForest_Model/Weinstein_unpublished/
+cd /home/b.weinstein/DeepForest_Model/
 
 #comet debug
 
