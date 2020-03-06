@@ -18,4 +18,4 @@ export LD_LIBRARY_PATH=/home/b.weinstein/miniconda3/envs/crowns/lib/:${LD_LIBRAR
 cd /home/b.weinstein/DeepForest_Model/
 
 python generate.py
-python GenerateAnchors.py
+#python GenerateAnchors.py
