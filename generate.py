@@ -185,6 +185,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     xmls = glob.glob(BASE_PATH + "hand_annotations/*.xml")
     annotation_list = []
     for xml in xmls:
+        print(xml)
         annotation = utilities.xml_to_annotations(xml)
         annotation_list.append(annotation)
     
@@ -280,7 +281,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = True
+    DEBUG = False
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
