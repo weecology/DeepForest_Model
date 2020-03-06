@@ -24,7 +24,7 @@ def pretraining(deepforest, BASE_PATH):
     list_of_tfrecords = glob.glob(BASE_PATH + "pretraining/tfrecords/*.tfrecord")
     deepforest_model.train(annotations=BASE_PATH + "pretraining/crops/pretraining.csv",
                            input_type="tfrecord",
-                           list_of_tfrecords=list_of_tfrecords[0:10],
+                           list_of_tfrecords=list_of_tfrecords,
                            comet_experiment=comet_experiment)
     
     if not deepforest_model.config["validation_annotations"] == "None":

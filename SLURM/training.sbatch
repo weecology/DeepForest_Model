@@ -5,12 +5,12 @@
 #SBATCH --account=ewhite
 #SBATCH --nodes=1                 # Number of MPI ranks
 #SBATCH --cpus-per-task=20
-#SBATCH --mem=30GB
+#SBATCH --mem=80GB
 #SBATCH --time=72:00:00       #Time limit hrs:min:sec
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err
 #SBATCH --partition=gpu
-#SBATCH --gpus=4
+#SBATCH --gpus=8
 
 module load tensorflow/1.14.0
 
