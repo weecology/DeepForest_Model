@@ -223,7 +223,7 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"
         DATA_PATH = "/orange/ewhite/NeonData/"        
-        dask_client = start_dask_cluster(number_of_workers=60, mem_size="11GB")
+        dask_client = start_dask_cluster(number_of_workers=60, mem_size="10GB")
     
     #Run Benchmark
     #generate_benchmark(BENCHMARK_PATH)
