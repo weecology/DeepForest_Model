@@ -15,6 +15,7 @@ def pretraining(deepforest, BASE_PATH):
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Pretraining")
     comet_experiment.log_parameter("timestamp",timestamp)
+    
     # create a dir for the run
     save_path = BASE_PATH + "snapshots/{}/".format(timestamp)
     os.mkdir(save_path)
@@ -73,7 +74,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
         comet_experiment.log_metric("mAP", mAP)
         
         #save predictions 
-        boxes = deepforest_model.predict_generator(annotations = deepforest_model.config["validation_annotations"], score_threshold = deepforest_model.config["score_threshold"] )
+        boxes = deepforest_model.predict_generator(annotations = deepforest_model.config["validation_annotations"])
         boxes.to_csv(save_path + "submission.csv", index=False)
         
         #Compute training mAP

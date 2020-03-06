@@ -4,6 +4,8 @@ import pandas as pd
 import glob
 import os
 import numpy as np
+import geopandas as gp
+import rasterio
 
 from deepforest import utilities
 from deepforest import preprocess
@@ -12,6 +14,62 @@ from deepforest import preprocess
 from dask_utility import start_dask_cluster
 from dask.distributed import wait
 
+def shapefile_to_annotations(shapefile, rgb, savedir="."):
+    """
+    Convert a shapefile of annotations into annotations csv file for DeepForest training and evaluation
+    Args:
+        shapefile: Path to a shapefile on disk. If a label column is present, it will be used, else all labels are assumed to be "Tree"
+        rgb: Path to the RGB image on disk
+        savedir: Directory to save csv files
+    Returns:
+        None: a csv file is written
+    """
+    #Read shapefile
+    gdf = gp.read_file(shapefile)
+    
+    #get coordinates
+    df = gdf.geometry.bounds
+    
+    #raster bounds
+    with rasterio.open(rgb) as src:
+        left, bottom, right, top = src.bounds
+        
+    #Transform project coordinates to image coordinates
+    df["tile_xmin"] = df.minx - left
+    df["tile_xmin"] = df["tile_xmin"].astype(int)
+    
+    df["tile_xmax"] = df.maxx - left
+    df["tile_xmax"] = df["tile_xmax"].astype(int)
+    
+    #UTM is given from the top, but origin of an image is top left
+    
+    df["tile_ymax"] = top - df.miny 
+    df["tile_ymax"] = df["tile_ymax"].astype(int)
+    
+    df["tile_ymin"] = top - df.maxy
+    df["tile_ymin"] = df["tile_ymin"].astype(int)    
+    
+    #Add labels is they exist
+    if "label" in gdf.columns:
+        df["label"] = gdf["label"]
+    else:
+        df["label"] = "Tree"
+    
+    #add filename
+    df["image_path"] = os.path.basename(rgb)
+    
+    #select columns
+    result = df[["image_path","tile_xmin","tile_ymin","tile_xmax","tile_ymax","label"]]
+    result = result.rename(columns={"tile_xmin":"xmin","tile_ymin":"ymin","tile_xmax":"xmax","tile_ymax":"ymax"})
+    image_name = os.path.splitext(os.path.basename(rgb))[0]
+    csv_filename = os.path.join(savedir, "{}.csv".format(image_name))
+    
+    #ensure no zero area polygons due to rounding to pixel size
+    result = result[~(result.xmin == result.xmax)]
+    result = result[~(result.ymin == result.ymax)]
+    
+    return result
+    
 def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client=None, allow_empty=False):
     
     #Remove previous files if needed
@@ -53,10 +111,6 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     #HOTFIX!, the current detection paths are not relative.
     annotations["image_path"] =  annotations["image_path"].apply(lambda x: os.path.basename(x))    
     annotations.to_csv(BASE_PATH + "pretraining/pretraining_annotations.csv", index=False)
-    
-    #Find training tiles and crop into overlapping windows for detection
-    
-
     
     #Find all tifs available
     image_index = annotations.image_path.unique()        
@@ -137,6 +191,19 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     #Collect hand annotations
     annotations = pd.concat(annotation_list, ignore_index=True)      
     
+    #collect shapefile annotations
+    shps = glob.glob(BASE_PATH + "hand_annotations/*.shp")
+    shps_tifs = glob.glob(BASE_PATH + "hand_annotations/*.tif")
+    shp_results = []
+    for shp in shps: 
+        rgb = "{}.tif".format(os.path.splitext(shp)[0])
+        shp_df = shapefile_to_annotations(shp, rgb)
+        shp_df = pd.DataFrame(shp_df)        
+        shp_results.append(shp_df)
+    
+    shp_results = pd.concat(shp_results,ignore_index=True)
+    annotations = pd.concat([annotations,shp_results])
+    
     #force dtype
     annotations.xmin = annotations.xmin.astype(int)
     annotations.ymin = annotations.ymin.astype(int)
@@ -149,6 +216,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     xmls = glob.glob(BASE_PATH+"hand_annotations/*.xml")
     xmls = [os.path.splitext(os.path.basename(x))[0] for x in xmls] 
     raster_list = [ BASE_PATH + "hand_annotations/" + x + ".tif" for x in xmls] 
+    raster_list = raster_list + shps_tifs 
     
     if DEBUG:
         raster_list=[raster_list[0]]
@@ -212,7 +280,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = False
+    DEBUG = True
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
@@ -226,7 +294,7 @@ if __name__=="__main__":
         dask_client = start_dask_cluster(number_of_workers=10, mem_size="10GB")
     
     #Run Benchmark
-    generate_benchmark(BENCHMARK_PATH)
+    #generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
     #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
