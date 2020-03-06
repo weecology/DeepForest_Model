@@ -69,7 +69,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     
     #Evaluate benchmark data as generator
     if not deepforest_model.config["validation_annotations"] == "None":
-        mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"], comet_experiment=comet_experiment, score_threshold = deepforest_model.config["score_threshold"] )
+        mAP = deepforest_model.evaluate_generator(annotations = deepforest_model.config["validation_annotations"], comet_experiment=comet_experiment)
         comet_experiment.log_metric("mAP", mAP)
         
         #save predictions 
