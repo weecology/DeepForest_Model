@@ -106,7 +106,7 @@ if __name__=="__main__":
     
     #Optionally set pretraining weights if not running concurrently.
     #deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/pretraining_weights_20191110_190026.h5"
-    deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/20200305_221437/resnet50_csv_02.h5"
+    deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/20200305_221437/resnet50_csv_05.h5"
 
 
     #Fine tune on top of pretraining records
