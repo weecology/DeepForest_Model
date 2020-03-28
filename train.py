@@ -80,7 +80,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
         #Compute training mAP
         #Don't upload training images, too many.
         deepforest_model.config["save_path"] = None
-        training_mAP = deepforest_model.evaluate_generator(annotations = BASE_PATH + "hand_annotations/crops/hand_annotations.csv", score_threshold = deepforest_model.config["score_threshold"] )
+        training_mAP = deepforest_model.evaluate_generator(annotations = BASE_PATH + "hand_annotations/crops/hand_annotations.csv")
         comet_experiment.log_metric("Training mAP", training_mAP)        
 if __name__=="__main__":
     
