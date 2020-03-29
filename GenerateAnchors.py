@@ -79,9 +79,11 @@ def generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE,config,dask_client):
                 print("future {} failed with {}".format(future, e))
 
 def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client):
+    
     #Generate tfrecords
+    dirname = "hand_annotations_multiyear/"
 
-    annotations_file = BASE_PATH + "hand_annotations/crops/hand_annotations.csv"
+    annotations_file = BASE_PATH + dirname + "crops/hand_annotations.csv"
 
     class_file = utilities.create_classes(annotations_file)
 
@@ -91,11 +93,11 @@ def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_cli
                                    image_min_side=config["image-min-side"],
                                    backbone_model=config["backbone"],
                                    size=SIZE,
-                                   savedir=FILEPATH + "hand_annotations/tfrecords/")
+                                   savedir=FILEPATH + dirname + "tfrecords/")
     else:
 
         #Collect annotation files for each tile
-        annotations_file= BASE_PATH + "hand_annotations/crops/hand_annotations.csv"
+        annotations_file= BASE_PATH + dirname + "crops/hand_annotations.csv"
         df = pd.read_csv(annotations_file, names=["image_path","xmin","ymin","xmax","ymax","label"])
 
         #enforce dtype, as there might be errors
@@ -119,7 +121,7 @@ def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_cli
             image_indices = indices[i * size:(i * size) + size]
             selected_images = images[image_indices]
             split_frame = df[df.image_path.isin(selected_images)]
-            filename = BASE_PATH + "hand_annotations/crops/hand_annotations{}.csv".format(i)
+            filename = BASE_PATH + dirname + "crops/hand_annotations{}.csv".format(i)
             split_frame.to_csv(filename, header=False,index=False)
             chunk_list.append(filename)
 
@@ -133,7 +135,7 @@ def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_cli
             image_min_side=config["image-min-side"],
             backbone_model=config["backbone"],
             size=SIZE,
-            savedir=FILEPATH + "hand_annotations/tfrecords/")
+            savedir=FILEPATH + dirname + "tfrecords/")
 
         wait(futures)
         for future in futures:
