@@ -173,8 +173,11 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
     
 def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     
+    #Hand annotation dirname
+    dirname = "hand_annotations_multiyear/"
+    
     #Remove previous files if needed
-    previous_files = ["hand_annotations/crops/hand_annotations.csv", "hand_annotations/hand_annotations.csv","hand_annotations/crops/classes.csv"]
+    previous_files = [ dirname + "crops/hand_annotations.csv", dirname + "hand_annotations.csv", dirname + "crops/classes.csv"]
     for f in previous_files:
         full_path = os.path.join(BASE_PATH,f)
         if os.path.exists(full_path):
@@ -182,7 +185,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
             
     ## Hand annotations ##
     #convert hand annotations from xml into retinanet format
-    xmls = glob.glob(BASE_PATH + "hand_annotations/*.xml")
+    xmls = glob.glob(BASE_PATH + dirname + "*.xml")
     annotation_list = []
     for xml in xmls:
         print(xml)
@@ -193,8 +196,8 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     annotations = pd.concat(annotation_list, ignore_index=True)      
     
     #collect shapefile annotations
-    shps = glob.glob(BASE_PATH + "hand_annotations/*.shp")
-    shps_tifs = glob.glob(BASE_PATH + "hand_annotations/*.tif")
+    shps = glob.glob(BASE_PATH + dirname + "*.shp")
+    shps_tifs = glob.glob(BASE_PATH + dirname + "*.tif")
     shp_results = []
     for shp in shps: 
         rgb = "{}.tif".format(os.path.splitext(shp)[0])
@@ -211,12 +214,12 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     annotations.xmax = annotations.xmax.astype(int)
     annotations.ymax = annotations.ymax.astype(int)
     
-    annotations.to_csv(BASE_PATH + "hand_annotations/hand_annotations.csv",index=False)
+    annotations.to_csv(BASE_PATH + dirname + "hand_annotations.csv",index=False)
     
     #Collect hand annotation tiles
-    xmls = glob.glob(BASE_PATH+"hand_annotations/*.xml")
+    xmls = glob.glob(BASE_PATH + dirname + "*.xml")
     xmls = [os.path.splitext(os.path.basename(x))[0] for x in xmls] 
-    raster_list = [ BASE_PATH + "hand_annotations/" + x + ".tif" for x in xmls] 
+    raster_list = [ BASE_PATH + dirname + x + ".tif" for x in xmls] 
     raster_list = raster_list + shps_tifs 
     
     if DEBUG:
@@ -227,8 +230,8 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     if dask_client:
         futures = dask_client.map(preprocess.split_raster,
                                   raster_list,
-                                  annotations_file=BASE_PATH + "hand_annotations/hand_annotations.csv",
-                                  base_dir=BASE_PATH + "hand_annotations/crops/",
+                                  annotations_file=BASE_PATH + dirname + "hand_annotations.csv",
+                                  base_dir=BASE_PATH + dirname + "crops/",
                                   patch_size=400,
                                   patch_overlap=0.05,
                                   allow_empty=allow_empty)
@@ -246,8 +249,8 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     else:
         for raster in raster_list:
             annotations_df= preprocess.split_raster(path_to_raster=raster,
-                                             annotations_file=BASE_PATH + "hand_annotations/hand_annotations.csv",
-                                             base_dir=BASE_PATH + "hand_annotations/crops/",
+                                             annotations_file=BASE_PATH + dirname + "hand_annotations.csv",
+                                             base_dir=BASE_PATH + dirname + "crops/",
                                              patch_size=400,
                                              patch_overlap=0.05)
             cropped_annotations.append(annotations_df)
@@ -256,7 +259,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     annotations = pd.concat(cropped_annotations, ignore_index=True)   
     
     #Ensure column order
-    annotations.to_csv(BASE_PATH + "hand_annotations/crops/hand_annotations.csv",index=False, header=None)
+    annotations.to_csv(BASE_PATH + dirname + "crops/hand_annotations.csv",index=False, header=None)
     print(annotations.head())
 
 ## Benchmark data for validation ##
