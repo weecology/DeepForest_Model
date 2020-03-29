@@ -41,6 +41,7 @@ def pretraining(deepforest, BASE_PATH):
 def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     
     input_type = "tfrecord"
+    dirname = "hand_annotations_multiyear/"
     
     #Log parameters
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
@@ -59,8 +60,8 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     deepforest_model.config["snapshot_path"] = save_path
     
     ##Fine tune model
-    list_of_tfrecords = glob.glob(BASE_PATH + "hand_annotations/tfrecords/*.tfrecord")
-    deepforest_model.train(annotations=BASE_PATH + "hand_annotations/crops/hand_annotations.csv",
+    list_of_tfrecords = glob.glob(BASE_PATH + dirname + "tfrecords/*.tfrecord")
+    deepforest_model.train(annotations=BASE_PATH + dirname + "crops/hand_annotations.csv",
                            input_type=input_type,
                            list_of_tfrecords=list_of_tfrecords,
                            comet_experiment=comet_experiment)
@@ -80,7 +81,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
         #Compute training mAP
         #Don't upload training images, too many.
         deepforest_model.config["save_path"] = None
-        training_mAP = deepforest_model.evaluate_generator(annotations = BASE_PATH + "hand_annotations/crops/hand_annotations.csv")
+        training_mAP = deepforest_model.evaluate_generator(annotations = BASE_PATH + dirname + "crops/hand_annotations.csv")
         comet_experiment.log_metric("Training mAP", training_mAP)        
 if __name__=="__main__":
     
