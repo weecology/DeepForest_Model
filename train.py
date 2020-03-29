@@ -40,7 +40,7 @@ def pretraining(deepforest, BASE_PATH):
 
 def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     
-    input_type = "fit_generator"
+    input_type = "tfrecord"
     
     #Log parameters
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
