@@ -219,7 +219,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     #Collect hand annotation tiles
     xmls = glob.glob(BASE_PATH + dirname + "*.xml")
     xmls = [os.path.splitext(os.path.basename(x))[0] for x in xmls] 
-    raster_list = [ BASE_PATH + dirname + x + ".tif" for x in xmls] 
+    raster_list = [BASE_PATH + dirname + x + ".tif" for x in xmls] 
     raster_list = raster_list + shps_tifs 
     
     if DEBUG:
