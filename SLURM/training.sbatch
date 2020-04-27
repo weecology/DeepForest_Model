@@ -15,7 +15,7 @@
 module load tensorflow/1.14.0
 
 export PATH=${PATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/bin/
-export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/lib/python3.7/site-packages/
+export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/lib/python3.6/site-packages/
 
 cd /home/b.weinstein/DeepForest_Model/
 
