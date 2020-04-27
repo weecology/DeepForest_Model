@@ -40,14 +40,14 @@ def pretraining(deepforest, BASE_PATH):
 
 def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     
-    input_type = "tfrecord"
-    dirname = "hand_annotations_multiyear/"
+    input_type = "fit_generator"
+    dirname = "fourchannel"
     
     #Log parameters
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest", workspace="bw4sz")
     
-    deepforest_model.config["epochs"] = 15
+    deepforest_model.config["epochs"] = 20
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Finetuning")
     comet_experiment.log_parameter("timestamp",timestamp)
@@ -59,12 +59,9 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     deepforest_model.config["save_path"] = save_path
     deepforest_model.config["snapshot_path"] = save_path
     
-    ##Fine tune model
-    list_of_tfrecords = glob.glob(BASE_PATH + dirname + "tfrecords/*.tfrecord")
+    ##Fine tune model    
     deepforest_model.train(annotations=BASE_PATH + dirname + "crops/hand_annotations.csv",
-                           input_type=input_type,
-                           list_of_tfrecords=list_of_tfrecords,
-                           comet_experiment=comet_experiment)
+                           input_type=input_type, comet_experiment=comet_experiment)
     
     #save weights
     deepforest_model.model.save(save_path + "finetuned_weights_{}.h5".format(timestamp))
@@ -83,6 +80,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
         deepforest_model.config["save_path"] = None
         training_mAP = deepforest_model.evaluate_generator(annotations = BASE_PATH + dirname + "crops/hand_annotations.csv")
         comet_experiment.log_metric("Training mAP", training_mAP)        
+
 if __name__=="__main__":
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -107,8 +105,7 @@ if __name__=="__main__":
     
     #Optionally set pretraining weights if not running concurrently.
     #deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/pretraining_weights_20191110_190026.h5"
-    deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/20200305_221437/resnet50_csv_01.h5"
-
+    #deepforest_model.config["weights"] = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/20200305_221437/resnet50_csv_01.h5"
 
     #Fine tune on top of pretraining records
     deepforest_model = finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH)
