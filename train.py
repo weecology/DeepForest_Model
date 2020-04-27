@@ -47,7 +47,7 @@ def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest", workspace="bw4sz")
     
-    deepforest_model.config["epochs"] = 20
+    deepforest_model.config["epochs"] = 300
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Finetuning")
     comet_experiment.log_parameter("timestamp",timestamp)
