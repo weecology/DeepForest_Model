@@ -208,6 +208,8 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
         
         shp_results = pd.concat(shp_results,ignore_index=True)
         annotations = pd.concat([annotations,shp_results])
+    else:
+        shps_tifs = [ ]
     
     #force dtype
     annotations.xmin = annotations.xmin.astype(int)
