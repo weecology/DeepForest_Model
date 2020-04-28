@@ -284,7 +284,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = True
+    DEBUG = False
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
