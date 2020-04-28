@@ -197,16 +197,17 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     
     #collect shapefile annotations
     shps = glob.glob(BASE_PATH + dirname + "*.shp")
-    shps_tifs = glob.glob(BASE_PATH + dirname + "*.tif")
-    shp_results = []
-    for shp in shps: 
-        rgb = "{}.tif".format(os.path.splitext(shp)[0])
-        shp_df = shapefile_to_annotations(shp, rgb)
-        shp_df = pd.DataFrame(shp_df)        
-        shp_results.append(shp_df)
-    
-    shp_results = pd.concat(shp_results,ignore_index=True)
-    annotations = pd.concat([annotations,shp_results])
+    if len(shps) > 0:
+        shps_tifs = glob.glob(BASE_PATH + dirname + "*.tif")
+        shp_results = []
+        for shp in shps: 
+            rgb = "{}.tif".format(os.path.splitext(shp)[0])
+            shp_df = shapefile_to_annotations(shp, rgb)
+            shp_df = pd.DataFrame(shp_df)        
+            shp_results.append(shp_df)
+        
+        shp_results = pd.concat(shp_results,ignore_index=True)
+        annotations = pd.concat([annotations,shp_results])
     
     #force dtype
     annotations.xmin = annotations.xmin.astype(int)
