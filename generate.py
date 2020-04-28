@@ -174,7 +174,7 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
 def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     
     #Hand annotation dirname
-    dirname = "hand_annotations_multiyear/"
+    dirname = "fourchannel/"
     
     #Remove previous files if needed
     previous_files = [ dirname + "crops/hand_annotations.csv", dirname + "hand_annotations.csv", dirname + "crops/classes.csv"]
@@ -298,13 +298,13 @@ if __name__=="__main__":
         dask_client = start_dask_cluster(number_of_workers=10, mem_size="10GB")
     
     #Run Benchmark
-    generate_benchmark(BENCHMARK_PATH)
+    #generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
     #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
     
     #Run Training
-    #generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
+    generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=True)
     
 
     
