@@ -9,12 +9,13 @@
 #SBATCH --output=/home/b.weinstein/logs/generate.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/generate.err
 
-module load tensorflow/1.14.0
 
 export PATH=${PATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/bin/
 export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/lib/python3.7/site-packages/
 export LD_LIBRARY_PATH=/home/b.weinstein/miniconda3/envs/DeepForestFusion/lib/:${LD_LIBRARY_PATH}
 
 cd /home/b.weinstein/DeepForest_Model/
+
+module load tensorflow/1.14.0
 
 python generate.py
