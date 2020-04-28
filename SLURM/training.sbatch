@@ -14,8 +14,9 @@
 
 module load tensorflow/1.14.0
 
-export PATH=${PATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/bin/
-export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/DeepForestFusion/lib/python3.7/site-packages/
+export PATH=${PATH}:/home/b.weinstein/miniconda3/envs/DeepForest_LIDAR/bin/
+export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/DeepForest_LIDAR/lib/python3.7/site-packages/
+export LD_LIBRARY_PATH=/home/b.weinstein/miniconda3/envs/DeepForest_LIDAR/lib/:${LD_LIBRARY_PATH}
 
 cd /home/b.weinstein/DeepForest_Model/
 
