@@ -185,13 +185,16 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
             
     ## Hand annotations ##
     #convert hand annotations from xml into retinanet format
-    xmls = glob.glob(BASE_PATH + dirname + "*.xml")
+    xmls = glob.glob(BENCHMARK_PATH + "annotations/" + "*.xml")
     annotation_list = []
     for xml in xmls:
-        print(xml)
-        annotation = utilities.xml_to_annotations(xml)
-        annotation_list.append(annotation)
-    
+        #check if it is in the directory
+        image_name = "{}.tif".format(os.path.splitext(os.path.basename(xml))[0])
+        if os.path.exists(os.path.join(BASE_PATH + dirname + image_name)):
+            print(xml)
+            annotation = utilities.xml_to_annotations(xml)
+            annotation_list.append(annotation)
+        
     #Collect hand annotations
     annotations = pd.concat(annotation_list, ignore_index=True)      
     
@@ -219,7 +222,7 @@ def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     #Collect hand annotation tiles
     xmls = glob.glob(BASE_PATH + dirname + "*.xml")
     xmls = [os.path.splitext(os.path.basename(x))[0] for x in xmls] 
-    raster_list = [ BASE_PATH + dirname + x + ".tif" for x in xmls] 
+    raster_list = [BASE_PATH + dirname + x + ".tif" for x in xmls] 
     raster_list = raster_list + shps_tifs 
     
     if DEBUG:
