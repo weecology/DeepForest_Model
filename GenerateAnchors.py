@@ -227,11 +227,11 @@ if __name__=="__main__":
         BASE_PATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         FILEPATH = "/orange/ewhite/b.weinstein/NeonTreeEvaluation/"
         BENCHMARK_PATH = "/home/b.weinstein/NeonTreeEvaluation/"
-        dask_client = start_dask_cluster(number_of_workers=5, mem_size="5GB")
+        dask_client = start_dask_cluster(number_of_workers=15, mem_size="5GB")
 
     #Read config
     config = read_config("deepforest_config.yml")
 
     generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
     #generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client)
-    generate_benchmark(DEBUG, BENCHMARK_PATH, BENCHMARK_PATH, SIZE, config, dask_client)
+    #generate_benchmark(DEBUG, BENCHMARK_PATH, BENCHMARK_PATH, SIZE, config, dask_client)
