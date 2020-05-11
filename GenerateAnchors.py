@@ -81,7 +81,7 @@ def generate_pretraining(DEBUG, BASE_PATH, FILEPATH, SIZE,config,dask_client):
 def generate_hand_annotations(DEBUG, BASE_PATH, FILEPATH, SIZE, config, dask_client):
     
     #Generate tfrecords
-    dirname = "hand_annotations_multiyear/"
+    dirname = "hand_annotations/"
 
     annotations_file = BASE_PATH + dirname + "crops/hand_annotations.csv"
 

@@ -174,7 +174,7 @@ def generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH,dask_client
 def generate_training(DEBUG, BASE_PATH, dask_client=None, allow_empty=False):
     
     #Hand annotation dirname
-    dirname = "hand_annotations_multiyear/"
+    dirname = "hand_annotations/"
     
     #Remove previous files if needed
     previous_files = [ dirname + "crops/hand_annotations.csv", dirname + "hand_annotations.csv", dirname + "crops/classes.csv"]
