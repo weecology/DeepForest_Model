@@ -276,9 +276,9 @@ def generate_benchmark(BENCHMARK_PATH):
     for xml_path in xmls:
         try:
             annotation = utilities.xml_to_annotations(xml_path)
+            annotation_list.append(annotation)            
         except:
             pass
-        annotation_list.append(annotation)
     benchmark_annotations = pd.concat(annotation_list, ignore_index=True)      
     
     #save evaluation annotations
@@ -287,7 +287,7 @@ def generate_benchmark(BENCHMARK_PATH):
     
 if __name__=="__main__":
     #Local debug. If False, paths on UF hypergator supercomputing cluster
-    DEBUG = False
+    DEBUG = True
   
     if DEBUG:
         BASE_PATH = "/Users/ben/Documents/DeepForest_Model/"
@@ -301,13 +301,13 @@ if __name__=="__main__":
         dask_client = start_dask_cluster(number_of_workers=20, mem_size="10GB")
     
     #Run Benchmark
-    #generate_benchmark(BENCHMARK_PATH)
+    generate_benchmark(BENCHMARK_PATH)
         
     #Run pretraining
     #generate_pretraining(DEBUG, BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
     
     #Run Training
-    generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=False)
+    #generate_training(DEBUG, BASE_PATH, dask_client, allow_empty=False)
     
 
     
