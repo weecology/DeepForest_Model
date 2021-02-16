@@ -1,30 +1,11 @@
-name: DeepForest_dask
+name: deepforest_pytorch
 channels:
-  - defaults
+  - conda-forge
 dependencies:
-  - python=3.6
-  - sphinx
-  - pyyaml
+  - python=3.7
   - pytest
-  - numpydoc
-  - cython
-  - h5py
-  - xmltodict
-  - tqdm
-  - numpy
-  - pillow
-  - scipy
   - pip
-  - matplotlib
-  - sphinx_rtd_theme
-  - pandas
   - pip:
-    - keras-resnet
-    - opencv-python
-    - slidingwindow
-    - git+https://github.com/Weecology/DeepForest
-    - git+https://github.com/bw4sz/keras-retinanet
-    - keras>= 2.3.0
-    - tensorflow
+    - deepforest-pytorch
     - comet-ml 
 
