@@ -40,14 +40,14 @@ def pretraining(deepforest, BASE_PATH):
 
 def finetuning(deepforest_model, BASE_PATH, BENCHMARK_PATH):
     
-    input_type = "tfrecord"
-    dirname = "hand_annotations_multiyear/"
+    input_type ="tfrecord"
+    dirname = "hand_annotations/"
     
     #Log parameters
     comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest", workspace="bw4sz")
     
-    deepforest_model.config["epochs"] = 300
+    deepforest_model.config["epochs"] = 30
     comet_experiment.log_parameters(deepforest_model.config)
     comet_experiment.log_parameter("Type","Finetuning")
     comet_experiment.log_parameter("timestamp",timestamp)
