@@ -11,5 +11,5 @@ train:
     print_freq: 1
     
     epochs: 10
-    
+    gpus: 1
     batch_size: 3
