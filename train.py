@@ -31,9 +31,14 @@ train_ds = m.load_dataset(
     root_dir="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/",
     augment=True)
 
+val_ds = m.load_dataset(
+    csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv",
+    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/",
+    augment=True)
+
 trainer.fit(m, train_ds)
 
-precision, recall = m.evaluate("/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations.csv", iou_threshold=0.4, score_threshold=0.1)
+precision, recall = m.evaluate("/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv", iou_threshold=0.4, score_threshold=0.1)
 
 comet_logger.experiment.log_metric(name = "Benchmark precision", value = precision)
 comet_logger.experiment.log_metric(name = "Benchmark recall", value = recall)
