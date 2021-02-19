@@ -1,7 +1,10 @@
+#srun -p gpu --gpus=1 --mem 10GB --time 5:00:00 --pty -u bash -i
+# conda activate deepforest_pytorch
+import comet_ml
+from pytorch_lightning.loggers import CometLogger
 from deepforest import main
 from deepforest.callbacks import evaluate_callback
 from datetime import datetime
-from comet_ml import CometLogger
 import torch
 import os
 import pytorch_lightning
@@ -19,13 +22,13 @@ eval_callback = evaluate_callback(
     csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations.csv", 
     root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/",iou_threshold=0.4, score_threshold=0.1)
 
-trainer = pytorch_lightning.Trainer(logger=comet_logger, max_epochs=m.config["train"]["epochs"], callbacks=[evaluate_callback])
 m = main.deepforest()
+trainer = pytorch_lightning.Trainer(logger=comet_logger, max_epochs=1, limit_train_batches=0.01, limit_val_batches=0.01)
 
 #Load dataset
 train_ds = m.load_dataset(
-    csv_file="orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv",
-    root_dir="orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/",
+    csv_file="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations_with_header.csv",
+    root_dir="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/",
     augment=True)
 
 trainer.fit(m, train_ds)
