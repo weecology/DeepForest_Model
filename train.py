@@ -33,8 +33,7 @@ train_ds = m.load_dataset(
 
 val_ds = m.load_dataset(
     csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv",
-    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/",
-    augment=True)
+    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/")
 
 trainer.fit(m, train_ds)
 
