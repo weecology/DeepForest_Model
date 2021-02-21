@@ -10,6 +10,6 @@ train:
     #Print loss every n epochs
     print_freq: 1
     
-    epochs: 10
+    epochs: 20
     gpus: 1
     batch_size: 1

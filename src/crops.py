@@ -109,7 +109,7 @@ def generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client=None,
                                     kind="quicksort", 
                                     na_position="last")
     
-    combined_annotations.to_csv(BASE_PATH + "pretraining/crops/pretraining.csv", index=False, header=None)
+    combined_annotations.to_csv(BASE_PATH + "pretraining/crops/pretraining.csv", index=False, header=True)
     
 def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allow_empty=False):
     
@@ -196,7 +196,7 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
     annotations = pd.concat(cropped_annotations, ignore_index=True)   
     
     #Ensure column order
-    annotations.to_csv(BASE_PATH + dirname + "crops/hand_annotations.csv",index=False, header=None)
+    annotations.to_csv(BASE_PATH + dirname + "crops/hand_annotations.csv",index=False, header=True)
     print(annotations.head())
 
 ## Benchmark data for validation ##
@@ -217,4 +217,4 @@ def generate_benchmark(BENCHMARK_PATH):
     
     #save evaluation annotations
     fname = os.path.join(BENCHMARK_PATH + "evaluation/RGB/benchmark_annotations.csv")
-    benchmark_annotations.to_csv(fname, index=False, header=None)
+    benchmark_annotations.to_csv(fname, index=False, header=True)
