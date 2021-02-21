@@ -23,7 +23,15 @@ eval_callback = evaluate_callback(
     root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/",iou_threshold=0.4, score_threshold=0.1)
 
 m = main.deepforest()
-trainer = pytorch_lightning.Trainer(logger=comet_logger, max_epochs=m.config["train"]["epochs"], gpus=m.config["train"]["gpus"], checkpoint_callback=False)
+comet_logger.experiment.log_parameters(m.config)
+
+trainer = pytorch_lightning.Trainer(
+    logger=comet_logger,
+    max_epochs=m.config["train"]["epochs"],
+    gpus=m.config["train"]["gpus"],
+    checkpoint_callback=False,
+    distributed_backend="ddp"
+)
 
 #Load dataset
 train_ds = m.load_dataset(
