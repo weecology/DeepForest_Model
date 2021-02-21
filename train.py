@@ -27,7 +27,7 @@ trainer = pytorch_lightning.Trainer(logger=comet_logger, max_epochs=1, fast_dev_
 
 #Load dataset
 train_ds = m.load_dataset(
-    csv_file="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations_with_header.csv",
+    csv_file="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv",
     root_dir="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/",
     augment=True)
 
