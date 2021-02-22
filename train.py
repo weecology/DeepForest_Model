@@ -8,10 +8,14 @@ from datetime import datetime
 import torch
 import os
 import pytorch_lightning
+import time
+import random
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
 
+#add small sleep for SLURM jobs
+time.sleep(random.randint(0,10))
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
@@ -41,7 +45,7 @@ train_ds = m.load_dataset(
 
 val_ds = m.load_dataset(
     csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv",
-    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/")
+    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/", shuffle=False)
 
 trainer.fit(m, train_ds, val_ds)
 
