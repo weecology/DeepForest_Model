@@ -16,7 +16,7 @@ comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
 #add small sleep for SLURM jobs
 time.sleep(random.randint(0,10))
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-comet_logger.experiment.log_parameter("timestamp")
+comet_logger.experiment.log_parameter("timestamp", timestamp)
 save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
 
 try:
