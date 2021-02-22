@@ -4,7 +4,7 @@
 #Dataloaders
 workers: 20
 gpus: 1
-distributed_backend: dds
+distributed_backend: ddp
 batch_size: 5
 
 train:
