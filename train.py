@@ -18,8 +18,11 @@ time.sleep(random.randint(0,10))
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 comet_logger.experiment.log_parameter("timestamp")
 save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
+
 try:
     os.mkdir(save_dir)
+except:
+    pass
 
 #Create objects
 m = main.deepforest(logger=comet_logger)
