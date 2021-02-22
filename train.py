@@ -3,57 +3,29 @@
 import comet_ml
 from pytorch_lightning.loggers import CometLogger
 from deepforest import main
-from deepforest.callbacks import evaluate_callback
+from deepforest.callbacks import images_callback
 from datetime import datetime
 import torch
 import os
-import pytorch_lightning
 import time
 import random
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
 
-#Create objects
-eval_callback = evaluate_callback(
-    csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations.csv", 
-    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/",iou_threshold=0.4, score_threshold=0.1)
-
-m = main.deepforest()
-comet_logger.experiment.log_parameters(m.config["train"])
-
-trainer = pytorch_lightning.Trainer(
-    logger=comet_logger,
-    max_epochs=m.config["train"]["epochs"],
-    gpus=m.config["train"]["gpus"],
-    checkpoint_callback=False,
-    distributed_backend="ddp"
-)
-
-#Load dataset
-train_ds = m.load_dataset(
-    csv_file="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv",
-    root_dir="/orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/",
-    augment=True)
-
-val_ds = m.load_dataset(
-    csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv",
-    root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/", shuffle=False)
-
-trainer.fit(m, train_ds, val_ds)
-
-precision, recall = m.evaluate(csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv",
-                               root_dir="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/",iou_threshold=0.4, score_threshold=0.1)
-
-comet_logger.experiment.log_metric(name = "Benchmark precision", value = precision)
-comet_logger.experiment.log_metric(name = "Benchmark recall", value = recall)
-
 #add small sleep for SLURM jobs
 time.sleep(random.randint(0,10))
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 comet_logger.experiment.log_parameter("timestamp")
 save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
-os.mkdir(save_dir)
+try:
+    os.mkdir(save_dir)
 
-
+#Create objects
+m = main.deepforest(logger=comet_logger)
+im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
+m.create_trainer(callbacks=im_callback)
+comet_logger.experiment.log_parameters(m.config["train"])
+m.run_train()
+m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 torch.save(m.backbone.state_dict(), "{}/hand_annotated_model.pt".format(save_dir))
