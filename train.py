@@ -25,7 +25,10 @@ try:
 m = main.deepforest(logger=comet_logger)
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
 m.create_trainer(callbacks=im_callback)
+
 comet_logger.experiment.log_parameters(m.config["train"])
+
 m.run_train()
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+
 torch.save(m.backbone.state_dict(), "{}/hand_annotated_model.pt".format(save_dir))
