@@ -14,13 +14,6 @@ import random
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
 
-#add small sleep for SLURM jobs
-time.sleep(random.randint(0,10))
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
-os.mkdir(save_dir)
-
 #Create objects
 eval_callback = evaluate_callback(
     csv_file="/home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations.csv", 
@@ -54,5 +47,13 @@ precision, recall = m.evaluate(csv_file="/home/b.weinstein/NeonTreeEvaluation/ev
 
 comet_logger.experiment.log_metric(name = "Benchmark precision", value = precision)
 comet_logger.experiment.log_metric(name = "Benchmark recall", value = recall)
+
+#add small sleep for SLURM jobs
+time.sleep(random.randint(0,10))
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+comet_logger.experiment.log_parameter("timestamp")
+save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
+os.mkdir(save_dir)
+
 
 torch.save(m.backbone.state_dict(), "{}/hand_annotated_model.pt".format(save_dir))
