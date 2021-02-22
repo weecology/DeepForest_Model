@@ -17,10 +17,10 @@ comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
 time.sleep(random.randint(0,10))
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 comet_logger.experiment.log_parameter("timestamp", timestamp)
-save_dir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
+savedir = "{}/{}".format("/orange/ewhite/b.weinstein/NeonTreeEvaluation/snapshots/",timestamp)
 
 try:
-    os.mkdir(save_dir)
+    os.mkdir(savedir)
 except:
     pass
 
@@ -34,4 +34,4 @@ comet_logger.experiment.log_parameters(m.config["train"])
 m.run_train()
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 
-torch.save(m.backbone.state_dict(), "{}/hand_annotated_model.pt".format(save_dir))
+torch.save(m.backbone.state_dict(), "{}/hand_annotated_model.pt".format(savedir))
