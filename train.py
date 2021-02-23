@@ -36,4 +36,4 @@ comet_logger.experiment.log_parameters(m.config["validation"])
 m.run_train()
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 
-torch.save(m.backbone.state_dict(), "{}/hand_annotated_model.pt".format(savedir))
+torch.save(m.model.state_dict(), "{}/hand_annotated_model.pt".format(savedir))
