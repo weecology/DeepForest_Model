@@ -25,7 +25,7 @@ validation:
     #callback args
     csv_file: /home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv
     root_dir: /home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/
-    project:
+    project: True
     #Intersection over union evaluation
     iou_threshold: 0.4
     score_threshold: 0
