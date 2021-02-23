@@ -25,11 +25,13 @@ except:
     pass
 
 #Create objects
-m = main.deepforest(logger=comet_logger)
+m = main.deepforest()
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
-m.create_trainer(callbacks=im_callback)
+m.create_trainer(callbacks=im_callback, logger=comet_logger)
 
+comet_logger.experiment.log_parameters(m.config)
 comet_logger.experiment.log_parameters(m.config["train"])
+comet_logger.experiment.log_parameters(m.config["validation"])
 
 m.run_train()
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
