@@ -5,9 +5,10 @@
 workers: 20
 gpus: 3
 distributed_backend: ddp
+
 batch_size: 18
 nms_thresh: 0.1
-
+score_thresh: 0.2
 train:
     csv_file: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv
     root_dir: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/
@@ -29,4 +30,3 @@ validation:
     project: False
     #Intersection over union evaluation
     iou_threshold: 0.4
-    score_threshold: 0.2
