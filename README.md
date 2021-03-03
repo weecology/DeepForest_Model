@@ -61,7 +61,7 @@ print(m.model)
 Training hyperparameters are read from a config file.
 ```
 cat deepforest_config.yml
-``
+```
 
 ```
 # Config file for DeepForest-pytorch module
