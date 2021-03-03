@@ -5,7 +5,6 @@ from pytorch_lightning.loggers import CometLogger
 from deepforest import main
 from deepforest.callbacks import images_callback
 from datetime import datetime
-import torch
 import os
 import time
 import random
@@ -36,4 +35,4 @@ comet_logger.experiment.log_parameters(m.config["validation"])
 m.trainer.fit(m)
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 
-torch.save(m.model.state_dict(),"{}/hand_annotated.pt".format(savedir))
+torch.save(m.save_model("{}/hand_annotated.pt".format(savedir))
