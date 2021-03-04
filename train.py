@@ -33,6 +33,7 @@ comet_logger.experiment.log_parameters(m.config["train"])
 comet_logger.experiment.log_parameters(m.config["validation"])
 
 m.trainer.fit(m)
+m.trainer.test(m)
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 
 m.save_model("{}/hand_annotated.pl".format(savedir))
