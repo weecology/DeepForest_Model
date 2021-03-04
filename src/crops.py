@@ -10,7 +10,6 @@ from deepforest import utilities
 from deepforest import preprocess
 
 #dask integration
-from dask_utility import start_dask_cluster
 from dask.distributed import wait
     
 def generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client=None, allow_empty=False):
@@ -211,7 +210,7 @@ def generate_benchmark(BENCHMARK_PATH):
         try:
             annotation = utilities.xml_to_annotations(xml_path)
         except:
-            pass
+            continue
         annotation_list.append(annotation)
     benchmark_annotations = pd.concat(annotation_list, ignore_index=True)      
     
