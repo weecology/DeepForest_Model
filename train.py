@@ -27,10 +27,6 @@ except:
 #Create objects
 m = main.deepforest()
 
-#temp change file to demo for testing
-m.config["validation"]["csv_file"] = get_data("OSBS_029.csv")
-m.config["validation"]["root_dir"] = os.path.dirname(m.config["validation"]["csv_file"])
-
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=1)
 m.create_trainer(callbacks=[im_callback], logger=comet_logger)
 

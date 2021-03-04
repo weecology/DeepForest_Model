@@ -11,7 +11,7 @@ dask_client = start_dask_cluster(number_of_workers=50, mem_size="10GB")
 dirname = "hand_annotations/"
 
 #Run Benchmark
-#crops.generate_benchmark(BENCHMARK_PATH)
+crops.generate_benchmark(BENCHMARK_PATH)
     
 #Run pretraining
 #crops.generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
