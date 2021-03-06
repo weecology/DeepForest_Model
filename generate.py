@@ -7,7 +7,7 @@ from dask_utility import start_dask_cluster
 BASE_PATH = "/orange/idtrees-collab/NeonTreeEvaluation/"
 BENCHMARK_PATH = "/orange/idtrees-collab/NeonTreeEvaluation/"
 DATA_PATH = "/orange/ewhite/NeonData/"        
-dask_client = start_dask_cluster(number_of_workers=50, mem_size="10GB")
+dask_client = start_dask_cluster(number_of_workers=5, mem_size="10GB")
 dirname = "pytorch/"
 
 #Run Benchmark

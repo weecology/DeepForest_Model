@@ -6,8 +6,8 @@ workers: 20
 gpus: 3
 distributed_backend: ddp
 
-batch_size: 18
-nms_thresh: 0.1
+batch_size: 10
+nms_thresh: 0.15
 score_thresh: 0.2
 train:
     csv_file: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv
@@ -18,15 +18,14 @@ train:
     
     #Print loss every n epochs
     print_freq: 1
-    epochs: 14
+    epochs: 30
     
     #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
     fast_dev_run: False
  
 validation:
     #callback args
-    csv_file: /home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv
-    root_dir: /home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/
-    project: False
+    csv_file: /orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations.csv
+    root_dir: /orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/
     #Intersection over union evaluation
     iou_threshold: 0.4
