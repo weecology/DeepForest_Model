@@ -12,7 +12,7 @@ import random
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
-comet_logger.experiment.tags("training")
+comet_logger.experiment.add_tag("training")
 
 #add small sleep for SLURM jobs
 time.sleep(random.randint(0,10))
