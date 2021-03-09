@@ -1,26 +1,48 @@
+#srun -p gpu --gpus=1 --mem 10GB --time 5:00:00 --pty -u bash -i
+# conda activate deepforest_pytorch
+import comet_ml
+from pytorch_lightning.loggers import CometLogger
 from deepforest import main
-from callbacks import comet_callbacks
-
+from deepforest import get_data
+from deepforest.callbacks import images_callback
 from datetime import datetime
-from comet_ml import Experiment
+import os
+import time
+import random
 
-comet_experiment = Experiment(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
+comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-#Create object
+comet_logger.experiment.tags("pretraining")
+
+#add small sleep for SLURM jobs
+time.sleep(random.randint(0,10))
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+comet_logger.experiment.log_parameter("timestamp", timestamp)
+savedir = "{}/{}".format("/orange/ewhite/b.weinstein/retinanet/",timestamp)
+
+try:
+    os.mkdir(savedir)
+except:
+    pass
+
+#Create objects
 m = main.deepforest()
 
-#Load dataset
-m.load_dataset(csv_file="orange/ewhite/b.weinstein/NeonTreeEvaluation/pretraining/crops/pretraining.csv", train=True)
+im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=3)
+m.create_trainer(callbacks=[im_callback], logger=comet_logger)
 
-comet_callback = comet_callbacks(experiment = comet_experiment)
+comet_logger.experiment.log_parameters(m.config)
+comet_logger.experiment.log_parameters(m.config["train"])
+comet_logger.experiment.log_parameters(m.config["validation"])
 
-m.train(callbacks=comet_callback)
-benchmark_mAP, precision, recall = m.evaluate("/orange/b.weinstein/NeonTreeEvaluation/benchmark_annotations.csv", metrics=["mAP","precision","recall"], iou_threshold=0.4, probability_threshold=0.2)
+m.trainer.fit(m)
+m.trainer.test(m)
+m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+boxes = m.predict_file(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+boxes.to_csv("{}/benchmark_predictions.csv".format(savedir))
+comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir))
 
-comet_experiment.log_metric(name = "Benchmark mAP", value = benchmark_mAP)
-comet_experiment.log_metric(name = "Benchmark precision", value = precision)
-comet_experiment.log_metric(name = "Benchmark recall", value = recall)
+m.save_model("{}/pretraining.pl".format(savedir))
+comet_logger.experiment.log_parameter("saved model", "{}/pretraining.pl".format(savedir))
 
-m.save()
