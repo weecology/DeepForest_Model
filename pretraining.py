@@ -1,14 +1,17 @@
 #srun -p gpu --gpus=1 --mem 10GB --time 5:00:00 --pty -u bash -i
 # conda activate deepforest_pytorch
 import comet_ml
-from pytorch_lightning.loggers import CometLogger
-from deepforest import main
-from deepforest import get_data
-from deepforest.callbacks import images_callback
 from datetime import datetime
+from deepforest import main
+from deepforest.callbacks import images_callback
+from deepforest.dataset import get_transform
+from deepforest.utilities import collate_fn
 import os
-import time
+from pytorch_lightning.loggers import CometLogger
 import random
+from src import dataset
+import time
+import torch
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
@@ -28,6 +31,20 @@ except:
 
 #Create objects
 m = main.deepforest()
+
+#override default train loader
+train_dataset = dataset.TreeDirectory(
+    csv_dir="/orange/ewhite/b.weinstein/NeonTreeEvaluation/pretraining/crops/",
+    root_dir="/orange/ewhite/b.weinstein/NeonTreeEvaluation/pretraining/crops/", 
+    transforms = get_transform(augment=True))
+
+data_loader = torch.utils.data.DataLoader(train_dataset,
+                                          batch_size=m.config["batch_size"],
+                                          shuffle=True,
+                                          collate_fn=collate_fn,
+                                          num_workers=m.config["workers"],
+                                          )
+m.train_dataloader = data_loader
 
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=3)
 m.create_trainer(callbacks=[im_callback], logger=comet_logger)

@@ -30,6 +30,7 @@ m = main.deepforest()
 
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=1)
 m.create_trainer(callbacks=[im_callback], logger=comet_logger)
+m.trainer.checkpoint_callback = True
 
 comet_logger.experiment.log_parameters(m.config)
 comet_logger.experiment.log_parameters(m.config["train"])
