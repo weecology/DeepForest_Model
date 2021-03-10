@@ -44,7 +44,6 @@ data_loader = torch.utils.data.DataLoader(train_dataset,
                                           collate_fn=collate_fn,
                                           num_workers=m.config["workers"],
                                           )
-m.train_dataloader = data_loader
 
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=3)
 m.create_trainer(callbacks=[im_callback], logger=comet_logger)
@@ -53,7 +52,7 @@ comet_logger.experiment.log_parameters(m.config)
 comet_logger.experiment.log_parameters(m.config["train"])
 comet_logger.experiment.log_parameters(m.config["validation"])
 
-m.trainer.fit(m)
+m.trainer.fit(train_dataloader=data_loader)
 m.trainer.test(m)
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 boxes = m.predict_file(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
