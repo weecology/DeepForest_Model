@@ -52,7 +52,7 @@ comet_logger.experiment.log_parameters(m.config)
 comet_logger.experiment.log_parameters(m.config["train"])
 comet_logger.experiment.log_parameters(m.config["validation"])
 
-m.trainer.fit(train_dataloader=data_loader)
+m.trainer.fit(m, train_dataloader=data_loader)
 m.trainer.test(m)
 m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 boxes = m.predict_file(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
