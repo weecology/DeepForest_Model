@@ -30,13 +30,24 @@ class TreeDirectory(Dataset):
         self.files = glob.glob("{}/*.csv".format(csv_dir))
         self.root_dir = root_dir
         self.transform = transforms
+        #create a dictionary of filenames and crops
+        self.image_dict = {}
+        counter = 0
+        for x in self.files:
+            annotations = pd.read_csv(x)
+            for image_path in annotations.image_path.unique():
+                self.image_dict[counter] = {"file":x, "image_path": image_path}
+                counter = counter + 1
+                
 
     def __len__(self):
-        return len(self.files)
+        return len(self.image_dict)
 
     def __getitem__(self, idx):
-        csv_file = self.files[idx]
-        image_annotations = pd.read_csv(csv_file)
+        file_dict = self.image_dict[idx]
+        csv_file=file_dict["file"]
+        tile_annotations = pd.read_csv(csv_file)
+        image_annotations = tile_annotations[tile_annotations.image_path == file_dict["image_path"]]
         img_name = os.path.join(self.root_dir, image_annotations.image_path.unique()[0])
         
         image = io.imread(img_name)
