@@ -3,7 +3,6 @@
 import comet_ml
 from pytorch_lightning.loggers import CometLogger
 from deepforest import main
-from deepforest import get_data
 from deepforest.callbacks import images_callback
 from datetime import datetime
 import os
@@ -37,8 +36,13 @@ comet_logger.experiment.log_parameters(m.config["train"])
 comet_logger.experiment.log_parameters(m.config["validation"])
 
 m.trainer.fit(m)
-m.trainer.test(m)
-m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+
+result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+comet_logger.experiment.log_metric("test_precision",result_dict["precision"])
+comet_logger.experiment.log_metric("test_recall",result_dict["recall"])
+result_dict["results"].to_csv("{}/results.csv".format(savedir))
+comet_logger.experiment.log_asset("{}/results.csv".format(savedir))
+
 boxes = m.predict_file(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
 boxes.to_csv("{}/benchmark_predictions.csv".format(savedir))
 comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir))

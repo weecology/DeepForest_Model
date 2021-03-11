@@ -15,7 +15,7 @@ dirname = "pytorch/"
 crops.generate_benchmark(BENCHMARK_PATH)
     
 #Run pretraining
-#crops.generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
+crops.generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
 
 #Run Training
 
