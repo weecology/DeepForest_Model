@@ -11,7 +11,7 @@ import random
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
-comet_logger.experiment.add_tag("training")
+comet_logger.experiment.add_tag("Finetuning")
 
 #add small sleep for SLURM jobs
 time.sleep(random.randint(0,10))
@@ -25,9 +25,9 @@ except:
     pass
 
 #Create objects
-m = main.deepforest()
+m = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/retinanet//20210311_185505/pretraining.pl")
 
-im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=1)
+im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=3)
 m.create_trainer(callbacks=[im_callback], logger=comet_logger)
 
 comet_logger.experiment.log_parameters(m.config)
