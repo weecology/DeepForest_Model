@@ -30,7 +30,8 @@ except:
     pass
 
 #Create objects
-m = main.deepforest()
+#m = main.deepforest()
+m = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/retinanet//20210311_185505/pretraining.pl")
 
 #override default train loader
 train_dataset = dataset.TreeDirectory(
