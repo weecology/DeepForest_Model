@@ -11,11 +11,11 @@ dask_client = start_dask_cluster(number_of_workers=2, mem_size="10GB")
 dirname = "pytorch/"
 
 #Run Benchmark
-crops.generate_benchmark(BENCHMARK_PATH)
+#crops.generate_benchmark(BENCHMARK_PATH)
     
 #Run pretraining
-crops.generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
+#crops.generate_pretraining(BASE_PATH, DATA_PATH, BENCHMARK_PATH, dask_client, allow_empty=False)
 
 #Run Training
 
-#crops.generate_training(BASE_PATH,BENCHMARK_PATH, dirname, dask_client, allow_empty=False)
+crops.generate_training(BASE_PATH,BENCHMARK_PATH, dirname, dask_client, allow_empty=False)

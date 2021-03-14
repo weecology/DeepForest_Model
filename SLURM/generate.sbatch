@@ -9,13 +9,7 @@
 #SBATCH --output=/home/b.weinstein/logs/generate.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/generate.err
 
-module load tensorflow/1.14.0
-
-export PATH=${PATH}:/home/b.weinstein/miniconda3/envs/crowns/bin/
-export PYTHONPATH=${PYTHONPATH}:/home/b.weinstein/miniconda3/envs/crowns/lib/python3.7/site-packages/
-export LD_LIBRARY_PATH=/home/b.weinstein/miniconda3/envs/crowns/lib/:${LD_LIBRARY_PATH}
-
+source activate deepforest_pytorch
 cd /home/b.weinstein/DeepForest_Model/
 
 python generate.py
-python GenerateAnchors.py
