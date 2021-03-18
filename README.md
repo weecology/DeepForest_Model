@@ -67,7 +67,8 @@ cat deepforest_config.yml
 
 and are documented 
 
-https://deepforest-pytorch.readthedocs.io/en/latest/config.html
+https://deepforest-pytorch.readthedocs.io/en/latest/ConfigurationFile.html
+
 Note that for hipergator, you need to both set the number of gpu in config and correctly request atleast that many GPUs from SLURM.
 
 ```
