@@ -3,25 +3,25 @@
 #cpu workers for data loaders
 #Dataloaders
 workers: 20
-gpus: 7
+gpus: 1
 distributed_backend: ddp
 
 batch_size: 10
 nms_thresh: 0.15
-score_thresh: 0.2
+score_thresh: 0.3
 train:
-    csv_file: /orange/ewhite/b.weinstein/NeonTreeEvaluation/pretraining/crops/pretraining.csv
-    root_dir: /orange/ewhite/b.weinstein/NeonTreeEvaluation/pretraining/crops/
+    csv_file: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv
+    root_dir: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/
     
     #Optomizer  initial learning rate
-    lr: 0.0001
+    lr: 0.001
     
     #Print loss every n epochs
     print_freq: 1
-    epochs: 4
+    epochs: 25
     
     #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
-    fast_dev_run: False
+    fast_dev_run: True
  
 validation:
     #callback args

@@ -45,7 +45,6 @@ python generate.py
 
 # Train a new model
 
-
 DeepForest-pytorch is documented https://deepforest-pytorch.readthedocs.io/en/latest/. To use the latest release model
 
 ```
@@ -61,41 +60,6 @@ print(m.model)
 Training hyperparameters are read from a config file.
 ```
 cat deepforest_config.yml
-```
-
-```
-# Config file for DeepForest-pytorch module
-
-#cpu workers for data loaders
-#Dataloaders
-workers: 20
-gpus: 3
-distributed_backend: ddp
-
-batch_size: 10
-nms_thresh: 0.1
-score_thresh: 0.1
-train:
-    csv_file: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv
-    root_dir: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/
-
-    #Optomizer  initial learning rate
-    lr: 0.001
-
-    #Print loss every n epochs
-    print_freq: 1
-    epochs: 30
-
-    #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
-    fast_dev_run: False
-
-validation:
-    #callback args
-    csv_file: /home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/benchmark_annotations_with_header.csv
-    root_dir: /home/b.weinstein/NeonTreeEvaluation/evaluation/RGB/
-    project: True
-    #Intersection over union evaluation
-    iou_threshold: 0.4
 ```
 
 and are documented 
@@ -118,4 +82,4 @@ comet_logger = CometLogger(api_key="######",
 
 ![](www/comet2.png)
 
-The official benchmark score is given by the metric "test_recall" and "test_precision"
+The benchmark score is given by the metric "test_recall" and "test_precision".
