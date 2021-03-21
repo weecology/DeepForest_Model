@@ -47,6 +47,9 @@ python generate.py
 
 DeepForest-pytorch is documented https://deepforest-pytorch.readthedocs.io/en/latest/. To use the latest release model
 
+[Google colab training sample](https://colab.research.google.com/drive/1AJUcw5dEpXeDPHd0sotAz5lpWedFYSIL?usp=sharing)
+
+# Starting from the release model
 ```
 from deepforest import main
 m = main.deepforest()
@@ -64,7 +67,8 @@ cat deepforest_config.yml
 
 and are documented 
 
-https://deepforest-pytorch.readthedocs.io/en/latest/training_config.html
+https://deepforest-pytorch.readthedocs.io/en/latest/ConfigurationFile.html
+
 Note that for hipergator, you need to both set the number of gpu in config and correctly request atleast that many GPUs from SLURM.
 
 ```
