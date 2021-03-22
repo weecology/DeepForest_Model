@@ -4,9 +4,11 @@ channels:
   - conda-forge
 dependencies:
   - pytest
+  - pytorch
+  - torchvision
+  - cudatoolkit=10.2
   - pip
   - pip:
-    - deepforest-pytorch
     - comet-ml 
     - imagecodecs
 
