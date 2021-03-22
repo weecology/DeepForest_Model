@@ -1,6 +1,5 @@
 name: deepforest_pytorch
 channels:
-  - pytorch
   - conda-forge
 dependencies:
   - pytest

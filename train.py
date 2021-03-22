@@ -38,8 +38,12 @@ comet_logger.experiment.log_parameters(m.config["validation"])
 m.trainer.fit(m)
 
 result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
-comet_logger.experiment.log_metric("test_precision",result_dict["precision"])
-comet_logger.experiment.log_metric("test_recall",result_dict["recall"])
+comet_logger.experiment.log_metric("test_box_precision",result_dict["box_precision"])
+comet_logger.experiment.log_metric("test_box_recall",result_dict["box_recall"])
+
+result_dict["class_recall"].to_csv("{}/class_recall.csv".format(savedir))
+comet_logger.experiment.log_asset("{}/class_recall.csv".format(savedir))
+
 result_dict["results"].to_csv("{}/results.csv".format(savedir))
 comet_logger.experiment.log_asset("{}/results.csv".format(savedir))
 
