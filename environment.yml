@@ -10,4 +10,6 @@ dependencies:
   - pip:
     - comet-ml 
     - imagecodecs
+    - dask
+    - dask-jobqueue
 
