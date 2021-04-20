@@ -8,6 +8,39 @@ import os
 from deepforest import main
 from pytorch_lightning.loggers import CometLogger
 
+def match_state_dict(state_dict_a, state_dict_b):
+    """ Filters state_dict_b to contain only states that are present in state_dict_a. Contributed by hgaiser
+    https://github.com/pytorch/pytorch/pull/39144#issuecomment-784560497
+
+    state_dict_a: Dict[str, torch.Tensor],
+        state_dict_b: Dict[str, torch.Tensor],
+) -> Tuple[Dict[str, torch.Tensor], Dict[str, torch.Tensor]]:
+
+    Matching happens according to two criteria:
+        - Is the key present in state_dict_a?
+        - Does the state with the same key in state_dict_a have the same shape?
+
+    Returns
+        (matched_state_dict, unmatched_state_dict)
+
+        States in matched_state_dict contains states from state_dict_b that are also
+        in state_dict_a and unmatched_state_dict contains states that have no
+        corresponding state in state_dict_a.
+
+    	In addition: state_dict_b = matched_state_dict U unmatched_state_dict.
+    """
+    matched_state_dict = {
+            key: state
+                for (key, state) in state_dict_b.items()
+                if key in state_dict_a and state.shape == state_dict_a[key].shape
+        }
+    unmatched_state_dict = {
+            key: state
+                for (key, state) in state_dict_b.items()
+                if key not in matched_state_dict
+        }
+    return matched_state_dict, unmatched_state_dict
+
 def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", debug=False, savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/"):
     
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
@@ -25,7 +58,18 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     except:
         pass
     
+    #Get release state dict
+    release_model = main.deepforest()
+    release_model.use_release()
+    
+    #Two class tree model
     m = main.deepforest(num_classes=2, label_dict={"Alive":0,"Dead":1})
+    
+    #filter matching 
+    matched_state_dict = match_state_dict(state_dict_a=m.state_dict(), state_dict_b=release_model.state_dict())
+    
+    m.load_state_dict(matched_state_dict[0],strict=False)
+    
     m.config["train"]["csv_file"] = train_path
     m.config["train"]["root_dir"] = image_dir
     m.config["validation"]["csv_file"] = test_path
