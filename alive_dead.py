@@ -46,6 +46,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest-pytorch", workspace="bw4sz")
     comet_logger.experiment.add_tag("DeadAlive")
+    comet_logger.experiment.add_tag("No pretraining")
     
     #add small sleep for SLURM jobs
     time.sleep(random.randint(0,10))
@@ -58,17 +59,17 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     except:
         pass
     
-    #Get release state dict
-    release_model = main.deepforest()
-    release_model.use_release()
+    ##Get release state dict
+    #release_model = main.deepforest()
+    #release_model.use_release()
     
     #Two class tree model
     m = main.deepforest(num_classes=2, label_dict={"Alive":0,"Dead":1})
     
-    #filter matching 
-    matched_state_dict = match_state_dict(state_dict_a=m.state_dict(), state_dict_b=release_model.state_dict())
+    ##filter matching 
+    #matched_state_dict = match_state_dict(state_dict_a=m.state_dict(), state_dict_b=release_model.state_dict())
     
-    m.load_state_dict(matched_state_dict[0],strict=False)
+    #m.load_state_dict(matched_state_dict[0],strict=False)
     
     m.config["train"]["csv_file"] = train_path
     m.config["train"]["root_dir"] = image_dir
