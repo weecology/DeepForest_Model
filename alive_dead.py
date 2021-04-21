@@ -32,10 +32,10 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.use_release()
     
     #Overwrite original retinanet with a two headed task
+    
     m.model = create(m.model, num_classes_task2=2, freeze_original=True)
-
+    m.label_dict = {"Alive":0,"Dead":1}
     #update the labels for the new task
-    m.label_dict={"Alive":0,"Dead":1}
     
     m.config["train"]["csv_file"] = train_path
     m.config["train"]["root_dir"] = image_dir

@@ -1,23 +1,50 @@
 #test two class headed output
-import torch
-from TwoHeadedRetinanet import create
-from deepforest import main
-import pytest
 
-@pytest.fixture()
-def trained_baseline():
-    m = main.deepforest()
-    m.use_release()
+from TwoHeadedRetinanet import TwoHeadedRetinanet
+from deepforest import main
+from deepforest import get_data
+from deepforest import preprocess
+from deepforest.visualize import format_boxes, plot_prediction_dataframe
+import os
+from skimage import io
+import torch
+
+def test_TwoHeadedRetinanet():
+    original_model = main.deepforest()
+    original_model.use_release()
     
-    return m.model
+    m = TwoHeadedRetinanet(trained_model=original_model.model)
+    m.eval()
     
-def test_create(trained_baseline):
-    model = create(trained_model=trained_baseline)
-    model.eval()
-    x = [torch.rand(3, 300, 400), torch.rand(3, 500, 400)]
-    prediction = model(x)    
+    image_path = get_data("OSBS_029.png")
+    image = io.imread(image_path)
+    x = preprocess.preprocess_image(image)
+
+    assert m.head.classification_head_task1.num_classes==1
+    assert m.head.classification_head_task2.num_classes==2    
+    
+    #set the nms thresh and score thresh as comparable to the original model
+    m.nms_thresh = original_model.model.nms_thresh
+    m.score_thresh = original_model.model.score_thresh
+    
+    prediction = m(x)    
+    assert list(prediction[0].keys()) == ["task1","task2"]
+    assert list(prediction[0]["task1"].keys()) == ["boxes","scores","labels"]
+    assert list(prediction[0]["task2"].keys()) == ["boxes","scores","labels"]
+    
+    #Boxes in task1 should be identical to original model 
+    original_model.model.eval()
+    original_prediction = original_model.model(x)
+    assert torch.equal(prediction[0]["task1"]["boxes"],original_prediction[0]["boxes"])
+    
+    task1_df = format_boxes(prediction[0]["task1"])
+    task1_df["image_path"] = os.path.basename(image_path)
+    task2_df = format_boxes(prediction[0]["task2"])
+    task2_df["image_path"] = os.path.basename(image_path)
+    
+    #View predictions
+    plot_prediction_dataframe(df= task1_df, root_dir=os.path.dirname(image_path), show=True)
     
     
-    
-    
+
 
