@@ -28,19 +28,16 @@ def test_TwoHeadedRetinanet():
     m.score_thresh = original_model.model.score_thresh
     
     prediction = m(x)    
-    assert list(prediction[0].keys()) == ["task1","task2"]
-    assert list(prediction[0]["task1"].keys()) == ["boxes","scores","labels"]
-    assert list(prediction[0]["task2"].keys()) == ["boxes","scores","labels"]
+    assert list(prediction[0].keys()) == ["boxes","scores","labels","scores_task2","labels_task2"]
     
     #Boxes in task1 should be identical to original model 
     original_model.model.eval()
     original_prediction = original_model.model(x)
-    assert torch.equal(prediction[0]["task1"]["boxes"],original_prediction[0]["boxes"])
+    assert torch.equal(prediction[0]["boxes"],original_prediction[0]["boxes"])
+    assert torch.equal(prediction[0]["scores"],original_prediction[0]["scores"])
     
-    task1_df = format_boxes(prediction[0]["task1"])
+    task1_df = format_boxes(prediction[0])
     task1_df["image_path"] = os.path.basename(image_path)
-    task2_df = format_boxes(prediction[0]["task2"])
-    task2_df["image_path"] = os.path.basename(image_path)
     
     #View predictions
     plot_prediction_dataframe(df= task1_df, root_dir=os.path.dirname(image_path), show=True)

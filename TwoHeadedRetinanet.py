@@ -105,27 +105,22 @@ class TwoHeadedRetinanet(RetinaNet):
         detections = self.postprocess_detections(split_head_outputs, split_anchors, images.image_sizes)
         
         #postprocess each task seperately, for convience wrap into seperate tasks list and then reform dict
-        
-        task1 = [x["task1"] for x in detections]
-        task2 = [x["task2"] for x in detections]
-        
-        task1 = self.transform.postprocess(task1, images.image_sizes, original_image_sizes)
-        task2 = self.transform.postprocess(task2, images.image_sizes, original_image_sizes)
-        
-        detections = []
-        for t1, t2 in zip(task1, task2):
-            detections.append({"task1":t1, "task2":t2})
+        detections = self.transform.postprocess(detections, images.image_sizes, original_image_sizes)
             
         return detections
     
-    def postprocess_image(self, box_regression_per_image, logits_per_image, anchors_per_image, image_shape):
+    def postprocess_image(self, box_regression_per_image, logits_per_image,logits_per_image_task2, anchors_per_image, image_shape):
+        """The primary task class is score thresholded, the secondary task (task2) is indexed based on the filters from the first task"""
         image_boxes = []
-        image_scores = []
         image_labels = []
+        image_scores = []                
+        image_scores_task2 = []        
+        image_labels_task2 = []
 
-        for box_regression_per_level, logits_per_level, anchors_per_level in \
-                zip(box_regression_per_image, logits_per_image, anchors_per_image):
+        for box_regression_per_level, logits_per_level,logits_per_level_task2, anchors_per_level in \
+                zip(box_regression_per_image, logits_per_image,logits_per_image_task2, anchors_per_image):
             num_classes = logits_per_level.shape[-1]
+            num_classes_task2 = logits_per_level_task2.shape[-1]
 
             # remove low scoring boxes
             scores_per_level = torch.sigmoid(logits_per_level).flatten()
@@ -140,6 +135,10 @@ class TwoHeadedRetinanet(RetinaNet):
 
             anchor_idxs = topk_idxs // num_classes
             labels_per_level = topk_idxs % num_classes
+            
+            #Repeat for task 2, but use selected box ids from task1
+            scores_per_level_task2 = torch.sigmoid(logits_per_level_task2[idxs,:]).flatten()
+            labels_per_level_task2 = scores_per_level_task2 % num_classes_task2
 
             boxes_per_level = self.box_coder.decode_single(box_regression_per_level[anchor_idxs],
                                                            anchors_per_level[anchor_idxs])
@@ -148,10 +147,14 @@ class TwoHeadedRetinanet(RetinaNet):
             image_boxes.append(boxes_per_level)
             image_scores.append(scores_per_level)
             image_labels.append(labels_per_level)
+            image_scores_task2.append(scores_per_level_task2)            
+            image_labels_task2.append(labels_per_level_task2)
 
         image_boxes = torch.cat(image_boxes, dim=0)
         image_scores = torch.cat(image_scores, dim=0)
         image_labels = torch.cat(image_labels, dim=0)
+        image_labels_task2 = torch.cat(image_labels_task2, dim=0)
+        image_scores_task2 = torch.cat(image_scores_task2, dim=0)
 
         # non-maximum suppression
         keep = box_ops.batched_nms(image_boxes, image_scores, image_labels, self.nms_thresh)
@@ -161,6 +164,9 @@ class TwoHeadedRetinanet(RetinaNet):
             'boxes': image_boxes[keep],
             'scores': image_scores[keep],
             'labels': image_labels[keep],
+            'scores_task2': image_scores[keep],                        
+            'labels_task2': image_labels_task2[keep],
+            
         }
         
         return result_dict
@@ -181,10 +187,7 @@ class TwoHeadedRetinanet(RetinaNet):
             logits_per_image_task2 = [cl[index] for cl in class_logits_task2]
     
             anchors_per_image, image_shape = anchors[index], image_shapes[index]
-            
-            task1_detections = self.postprocess_image(box_regression_per_image, logits_per_image_task1, anchors_per_image, image_shape)
-            task2_detections = self.postprocess_image(box_regression_per_image, logits_per_image_task2, anchors_per_image, image_shape)
-            detections.append({"task1":task1_detections,"task2":task2_detections})
+            detections.append(self.postprocess_image(box_regression_per_image, logits_per_image_task1,logits_per_image_task2, anchors_per_image, image_shape))
 
         return detections
     
