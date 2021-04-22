@@ -7,4 +7,5 @@ def test_train(tmpdir):
     alive_dead.train(train_path="/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_train.csv",
                      test_path="/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_test.csv",
                      image_dir="/Users/benweinstein/Documents/NeonTreeEvaluation/evaluation/RGB",
+                     savedir=tmpdir,
                      debug=True)

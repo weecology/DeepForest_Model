@@ -12,6 +12,9 @@ from TwoHeadedRetinanet import TwoHeadedRetinanet
 
 #Overwrite default training log
 class alive_dead_module(main.deepforest):
+    def __init__(self):
+        super().__init__()
+        
     def training_step(self, batch, batch_idx):
         """Train on a loaded dataset
         """
