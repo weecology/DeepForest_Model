@@ -104,4 +104,4 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
              
 if __name__ == "__main__":
     train(train_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
-          test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv")
+          test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv", debug=True)

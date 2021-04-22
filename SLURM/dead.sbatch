@@ -12,7 +12,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
 
-source activate deepforest_pytorch
+source activate Zooniverse_pytorch
 #modue load cuda
 cd /home/b.weinstein/DeepForest_Model/
 
