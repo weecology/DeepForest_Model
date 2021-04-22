@@ -14,7 +14,7 @@ from TwoHeadedRetinanet import TwoHeadedRetinanet
 class alive_dead_module(main.deepforest):
     def __init__(self):
         super().__init__()
-        
+    
     def training_step(self, batch, batch_idx):
         """Train on a loaded dataset
         """
@@ -54,7 +54,10 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     #Overwrite original retinanet with a two headed task
     m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=True)
+    
+    #Monkey-patch needed functions to self
     m.label_dict = {"Alive":0,"Dead":1}
+    m.topk_candidates = m.model.topk_candidates
     #update the labels for the new task
     
     m.config["train"]["csv_file"] = train_path
@@ -77,7 +80,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     m.trainer.fit(m)
     
-    result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+    result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
     
     comet_logger.experiment.log_metric("box_precision",result_dict["box_precision"])
     comet_logger.experiment.log_metric("box_recall",result_dict["box_recall"])
@@ -88,13 +91,12 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     result_dict["results"].to_csv("{}/results.csv".format(savedir))
     comet_logger.experiment.log_asset("{}/results.csv".format(savedir))
     
-    boxes = m.predict_file(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
     images = glob.glob("{}/*.png".format(savedir))
     random.shuffle(images)
     for img in images[:20]:
         comet_logger.experiment.log_image(img)
-    boxes.to_csv("{}/benchmark_predictions.csv".format(savedir))
-    comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir))
+    #boxes.to_csv("{}/benchmark_predictions.csv".format(savedir))
+    #comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir))
     
     m.save_model("{}/hand_annotated.pl".format(savedir))
     comet_logger.experiment.log_parameter("saved model", "{}/hand_annotated.pl".format(savedir))
