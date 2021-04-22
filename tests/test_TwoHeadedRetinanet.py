@@ -8,6 +8,7 @@ from deepforest.visualize import format_boxes, plot_prediction_dataframe
 import os
 from skimage import io
 import torch
+import numpy as np
 
 def test_TwoHeadedRetinanet_predict():
     original_model = main.deepforest()
@@ -35,6 +36,11 @@ def test_TwoHeadedRetinanet_predict():
     original_prediction = original_model.model(x)
     assert torch.equal(prediction[0]["boxes"],original_prediction[0]["boxes"])
     assert torch.equal(prediction[0]["scores"],original_prediction[0]["scores"])
+    
+    assert not torch.equal(prediction[0]["scores_task2"],original_prediction[0]["scores"])
+    
+    #Correct number of classes
+    assert all([x.numpy() in np.arange(m.head.classification_head_task2.num_classes) for x in prediction[0]["labels_task2"]])
     
     task1_df = format_boxes(prediction[0])
     task1_df["image_path"] = os.path.basename(image_path)

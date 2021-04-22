@@ -1,16 +1,19 @@
 #Alive Dead Model, optionally building from release tree crown model
 import comet_ml
-import glob
-import time
-import random
 from datetime import datetime
-import os
 from deepforest import main
+from deepforest import predict
+from deepforest import evaluate as evaluate_iou
+import glob
+import random
+import os
+import pandas as pd
 from pytorch_lightning.loggers import CometLogger
-from TwoHeadedRetinanet import TwoHeadedRetinanet
+import time
 import torch
 from torch import optim
-
+from TwoHeadedRetinanet import TwoHeadedRetinanet
+from src.predict_second_task import predict_file
 
 #Overwrite default training logs and lr
 class alive_dead_module(main.deepforest):
@@ -53,6 +56,51 @@ class alive_dead_module(main.deepforest):
         else:
             return optimizer
         
+    def evaluate_mortality(self,
+                 csv_file,
+                 root_dir,
+                 iou_threshold=None,
+                 show_plot=False,
+                 savedir=None):
+        """Compute intersection-over-union and precision/recall for a given iou_threshold
+
+        Args:
+            df: a pandas-type dataframe (geopandas is fine) with columns "name","xmin","ymin","xmax","ymax","label", each box in a row
+            root_dir: location of files in the dataframe 'name' column.
+            iou_threshold: float [0,1] intersection-over-union union between annotation and prediction to be scored true positive
+            show_plot: open a blocking matplotlib window to show plot and annotations, useful for debugging.
+            savedir: optional path dir to save evaluation images
+        Returns:
+            results: dict of ("results", "precision", "recall") for a given threshold
+        """
+        self.model.eval()
+
+        if not self.device.type == "cpu":
+            self.model = self.model.to(self.device)
+
+        predictions = predict_file(model=self.model,
+                                           csv_file=csv_file,
+                                           root_dir=root_dir,
+                                           savedir=savedir,
+                                           device=self.device,
+                                           iou_threshold=self.config["nms_thresh"])
+
+        predictions["label"] = predictions.label.apply(lambda x: self.numeric_to_label_dict[x])
+        ground_df = pd.read_csv(csv_file)
+
+        # if no arg for iou_threshold, set as config
+        if iou_threshold is None:
+            iou_threshold = self.config["validation"]["iou_threshold"]
+
+        results = evaluate_iou.evaluate(predictions=predictions,
+                                        ground_df=ground_df,
+                                        root_dir=root_dir,
+                                        iou_threshold=iou_threshold,
+                                        show_plot=show_plot)
+
+        return results        
+        
+        
 
 def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", debug=False, savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/"):
     
@@ -78,9 +126,9 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     #Overwrite original retinanet with a two headed task
     m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=True)
+    m.label_dict = {"Alive":0,"Dead":1}
     
     #Monkey-patch needed functions to self
-    m.label_dict = {"Alive":0,"Dead":1}
     m.topk_candidates = m.model.topk_candidates
     #update the labels for the new task
     
@@ -104,7 +152,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     m.trainer.fit(m)
     
-    result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
+    result_dict = m.evaluate_mortality(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
     
     comet_logger.experiment.log_metric("box_precision",result_dict["box_precision"])
     comet_logger.experiment.log_metric("box_recall",result_dict["box_recall"])
@@ -119,6 +167,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     random.shuffle(images)
     for img in images[:20]:
         comet_logger.experiment.log_image(img)
+        
     #boxes.to_csv("{}/benchmark_predictions.csv".format(savedir))
     #comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir))
     
