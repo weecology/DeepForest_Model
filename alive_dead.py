@@ -124,9 +124,10 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m = alive_dead_module()
     m.use_release()
     
-    #Overwrite original retinanet with a two headed task
+    #Overwrite original retinanet with a two headed task, remake the label dictionary
     m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=True)
     m.label_dict = {"Alive":0,"Dead":1}
+    m.numeric_to_label_dict = {v: k for k, v in m.label_dict.items()}
     
     #Monkey-patch needed functions to self
     m.topk_candidates = m.model.topk_candidates
