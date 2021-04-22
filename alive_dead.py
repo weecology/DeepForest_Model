@@ -8,6 +8,8 @@ import os
 from deepforest import main
 from pytorch_lightning.loggers import CometLogger
 from TwoHeadedRetinanet import TwoHeadedRetinanet
+import torch
+from torch import optim
 
 
 #Overwrite default training logs and lr
