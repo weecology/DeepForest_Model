@@ -6,7 +6,7 @@ workers: 15
 gpus: 3
 distributed_backend: ddp
 
-batch_size: 10
+batch_size: 1
 nms_thresh: 0.15
 score_thresh: 0.25
 train:
