@@ -10,7 +10,7 @@ from pytorch_lightning.loggers import CometLogger
 from TwoHeadedRetinanet import TwoHeadedRetinanet
 
 
-#Overwrite default training log
+#Overwrite default training logs and lr
 class alive_dead_module(main.deepforest):
     def __init__(self):
         super().__init__()
@@ -29,6 +29,28 @@ class alive_dead_module(main.deepforest):
             self.log("train_{}".format(key), value, on_epoch=True)
             
         return losses
+    
+    def configure_optimizers(self):
+        optimizer = optim.SGD(self.model.parameters(),
+                                   lr=self.config["train"]["lr"],
+                                   momentum=0.9)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
+                                                                    mode='min',
+                                                                    factor=0.1,
+                                                                    patience=10,
+                                                                    verbose=True,
+                                                                    threshold=0.0001,
+                                                                    threshold_mode='rel',
+                                                                    cooldown=0,
+                                                                    min_lr=0,
+                                                                    eps=1e-08)
+        
+        #Monitor rate is val data is used
+        if self.config["validation"]["csv_file"] is not None:
+            return {'optimizer':optimizer, 'lr_scheduler': scheduler,"monitor":'val_classification_task2'}
+        else:
+            return optimizer
+        
 
 def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", debug=False, savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/"):
     
