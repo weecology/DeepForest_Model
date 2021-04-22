@@ -135,7 +135,6 @@ class TwoHeadedRetinanet(RetinaNet):
         for box_regression_per_level, logits_per_level,logits_per_level_task2, anchors_per_level in \
                 zip(box_regression_per_image, logits_per_image,logits_per_image_task2, anchors_per_image):
             num_classes = logits_per_level.shape[-1]
-            num_classes_task2 = logits_per_level_task2.shape[-1]
 
             # remove low scoring boxes
             scores_per_level = torch.sigmoid(logits_per_level).flatten()
@@ -151,10 +150,14 @@ class TwoHeadedRetinanet(RetinaNet):
             anchor_idxs = topk_idxs // num_classes
             labels_per_level = topk_idxs % num_classes
             
-            #Repeat for task 2, but use selected box ids from task1
-            scores_per_level_task2 = torch.sigmoid(logits_per_level_task2[idxs,:]).flatten()
-            labels_per_level_task2 = scores_per_level_task2 % num_classes_task2
-
+            #Repeat for task 2, but use selected box ids from task1, return empty list if no task 1 boxes were selected
+            scores_per_level_task2 = torch.sigmoid(logits_per_level_task2[anchor_idxs,:])
+            
+            if anchor_idxs.shape[0] == 0:
+                labels_per_level_task2 = labels_per_level
+            else:
+                labels_per_level_task2 = torch.argmax(scores_per_level_task2, 1)
+            
             boxes_per_level = self.box_coder.decode_single(box_regression_per_level[anchor_idxs],
                                                            anchors_per_level[anchor_idxs])
             boxes_per_level = box_ops.clip_boxes_to_image(boxes_per_level, image_shape)
@@ -179,7 +182,7 @@ class TwoHeadedRetinanet(RetinaNet):
             'boxes': image_boxes[keep],
             'scores': image_scores[keep],
             'labels': image_labels[keep],
-            'scores_task2': image_scores[keep],                        
+            'scores_task2': image_scores_task2[keep],                        
             'labels_task2': image_labels_task2[keep],
             
         }
