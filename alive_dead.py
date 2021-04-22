@@ -7,7 +7,7 @@ from datetime import datetime
 import os
 from deepforest import main
 from pytorch_lightning.loggers import CometLogger
-from TwoHeadedRetinanet import create
+from TwoHeadedRetinanet import TwoHeadedRetinanet
     
 def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", debug=False, savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/"):
     
@@ -33,7 +33,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     #Overwrite original retinanet with a two headed task
     
-    m.model = create(m.model, num_classes_task2=2, freeze_original=True)
+    m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=True)
     m.label_dict = {"Alive":0,"Dead":1}
     #update the labels for the new task
     
@@ -46,6 +46,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
         m.config["train"]["fast_dev_run"] = True
         m.config["gpus"] = None
         m.config["workers"] = 0
+        m.config["distributed_backend"] = None
     
     m.create_trainer()
     
@@ -76,4 +77,4 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
              
 if __name__ == "__main__":
     train(train_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
-          test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv")
+          test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv")

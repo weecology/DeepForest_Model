@@ -9,7 +9,7 @@ import os
 from skimage import io
 import torch
 
-def test_TwoHeadedRetinanet():
+def test_TwoHeadedRetinanet_predict():
     original_model = main.deepforest()
     original_model.use_release()
     
@@ -43,5 +43,18 @@ def test_TwoHeadedRetinanet():
     plot_prediction_dataframe(df= task1_df, root_dir=os.path.dirname(image_path), show=True)
     
     
-
-
+def test_TwoHeadedRetinanet_train():
+    original_model = main.deepforest()
+    original_model.use_release()
+    
+    m = TwoHeadedRetinanet(trained_model=original_model.model)
+    csv_file = get_data("OSBS_029.csv")
+    
+    original_model.config["workers"] = 0
+    ds = original_model.load_dataset(csv_file=csv_file, root_dir=os.path.dirname(csv_file), augment=False, shuffle=True, batch_size=1)
+    
+    #TODO, the targets are current 0/1 from dead alive, it needs to pass target labels for EACH of the tasks.
+    
+    batch = next(iter(ds))
+    image_path, image, targets = batch
+    forward_pass = m(image, targets)    

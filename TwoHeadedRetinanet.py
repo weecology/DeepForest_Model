@@ -28,11 +28,26 @@ class TwoHeadedRetinaNetHead(torch.nn.Module):
 
     def compute_loss(self, targets, head_outputs, anchors, matched_idxs):
         # type: (List[Dict[str, Tensor]], Dict[str, Tensor], List[Tensor], List[Tensor]) -> Dict[str, Tensor]
+        
+        #Set logits and targets for auxillary task
+        head_outputs["cls_logits"] = head_outputs["cls_logits_task2"]     
+        classification_task2 = self.classification_head_task2.compute_loss(targets, head_outputs, matched_idxs)
+        
+        #The classification_head loss depends on a dictionary named cls_logit, temporarily rename each
+        head_outputs["cls_logits"] = head_outputs["cls_logits_task1"]
+        
+        #The first task of tree detection always has a label of 0, there is one class and no negatives.
+        for index, x in enumerate(targets):
+            targets[index]["labels"] = torch.zeros(targets[index]["labels"].shape, dtype=torch.int64)
+            
+        classification_task1 = self.classification_head_task1.compute_loss(targets, head_outputs, matched_idxs)
+        
         return {
-            'classification_task1': self.classification_head_task1.compute_loss(targets, head_outputs, matched_idxs),
-            'classification_task2': self.classification_head_task2.compute_loss(targets, head_outputs, matched_idxs),            
+            'classification_task1': classification_task1,
+            'classification_task2': classification_task2,            
             'bbox_regression': self.regression_head.compute_loss(targets, head_outputs, anchors, matched_idxs),
         }
+
 
     def forward(self, x):
         # type: (List[Tensor]) -> Dict[str, Tensor]
@@ -261,9 +276,7 @@ class TwoHeadedRetinanet(RetinaNet):
         losses = {}
         detections: List[Dict[str, Tensor]] = []
         if self.training:
-            assert targets is not None
-
-            # compute the losses
+            assert targets is not None            
             losses = self.compute_loss(targets, head_outputs, anchors)
         else:
             # recover level sizes
