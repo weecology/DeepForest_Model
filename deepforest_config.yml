@@ -6,8 +6,8 @@ workers: 10
 gpus: 1
 distributed_backend: ddp
 
-batch_size: 1
-nms_thresh: 0.2
+batch_size: 3
+nms_thresh: 0.15
 score_thresh: 0.25
 train:
     csv_file: /orange/ewhite/b.weinstein/NeonTreeEvaluation/hand_annotations/crops/hand_annotations.csv
