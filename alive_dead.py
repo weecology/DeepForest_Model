@@ -139,7 +139,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.config["validation"]["root_dir"] = image_dir
     
     if debug:
-        m.config["train"]["fast_dev_run"] = True
+        m.config["train"]["fast_dev_run"] = False
         m.config["gpus"] = None
         m.config["workers"] = 0
         m.config["distributed_backend"] = None
@@ -152,6 +152,14 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.create_trainer(logger=comet_logger)
     
     m.trainer.fit(m)
+    
+    #View training data
+    with comet_logger.experiment.train():
+        m.evaluate_mortality(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], savedir=savedir)
+        images = glob.glob("{}/*.png".format(savedir))
+        random.shuffle(images)
+        for img in images[:20]:
+            comet_logger.experiment.log_image(img)    
     
     result_dict = m.evaluate_mortality(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
     
