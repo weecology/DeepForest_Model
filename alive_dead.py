@@ -125,7 +125,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.use_release()
     
     #Overwrite original retinanet with a two headed task, remake the label dictionary
-    m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=True)
+    m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=False)
     m.label_dict = {"Dead":0,"Alive":1}
     m.numeric_to_label_dict = {v: k for k, v in m.label_dict.items()}
     
@@ -137,7 +137,6 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.config["train"]["root_dir"] = image_dir
     m.config["validation"]["csv_file"] = test_path
     m.config["validation"]["root_dir"] = image_dir
-    
     if debug:
         m.config["train"]["fast_dev_run"] = True
         m.config["gpus"] = None
