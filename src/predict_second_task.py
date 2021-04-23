@@ -19,6 +19,7 @@ def format_boxes(prediction, scores=True):
                       columns=["xmin", "ymin", "xmax", "ymax"])
     df["label"] = prediction["labels_task2"].cpu().detach().numpy()
 
+    #TODO return both sets of scores?
     if scores:
         df["score"] = prediction["scores"].cpu().detach().numpy()
 
