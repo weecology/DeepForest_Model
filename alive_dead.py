@@ -35,6 +35,37 @@ class alive_dead_module(main.deepforest):
             
         return losses
     
+    def validation_step(self, batch, batch_idx):
+        """Train on a loaded dataset
+
+        """
+        path, images, targets = batch
+
+        #Get losses
+        self.model.train()
+        loss_dict = self.model.forward(images, targets)
+
+        # sum of regression and classification loss
+        losses = sum([loss for loss in loss_dict.values()])
+
+        # Log loss
+        for key, value in loss_dict.items():
+            self.log("val_{}".format(key), value, on_epoch=True)
+
+        self.model.eval()
+        predictions = self.model.forward(images)
+        
+        dead_trees = 0
+        for x in predictions:
+            dead_trees+=sum(x["labels_task2"] == 0)
+        
+        return losses, dead_trees
+    
+    def validation_epoch_end(self, outputs):
+        dead_trees = torch.stack([x[1] for x in outputs]).sum()
+        self.log("dead_trees", dead_trees)
+        
+    
     def configure_optimizers(self):
         optimizer = optim.SGD(self.model.parameters(),
                                    lr=self.config["train"]["lr"],
