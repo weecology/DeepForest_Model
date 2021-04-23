@@ -126,7 +126,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     #Overwrite original retinanet with a two headed task, remake the label dictionary
     m.model = TwoHeadedRetinanet(trained_model=m.model, num_classes_task2=2, freeze_original=True)
-    m.label_dict = {"Alive":0,"Dead":1}
+    m.label_dict = {"Dead":0,"Alive":1}
     m.numeric_to_label_dict = {v: k for k, v in m.label_dict.items()}
     
     #Monkey-patch needed functions to self
@@ -139,7 +139,7 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.config["validation"]["root_dir"] = image_dir
     
     if debug:
-        m.config["train"]["fast_dev_run"] = False
+        m.config["train"]["fast_dev_run"] = True
         m.config["gpus"] = None
         m.config["workers"] = 0
         m.config["distributed_backend"] = None
@@ -152,14 +152,6 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.create_trainer(logger=comet_logger)
     
     m.trainer.fit(m)
-    
-    #View training data
-    with comet_logger.experiment.train():
-        m.evaluate_mortality(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], savedir=savedir)
-        images = glob.glob("{}/*.png".format(savedir))
-        random.shuffle(images)
-        for img in images[:20]:
-            comet_logger.experiment.log_image(img)    
     
     result_dict = m.evaluate_mortality(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
     
