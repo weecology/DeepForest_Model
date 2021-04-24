@@ -99,7 +99,10 @@ class TwoHeadedRetinanet(RetinaNet):
                 param.requires_grad = False
             
             for param in self.head.regression_head.parameters():
-                param.requires_grad = False        
+                param.requires_grad = False   
+                
+            for param in self.backbone.parameters():
+                param.requires_grad = False                
     
     def get_detections(self, head_outputs, features, images, anchors, original_image_sizes):
         num_anchors_per_level = [x.size(2) * x.size(3) for x in features]

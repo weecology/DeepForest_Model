@@ -63,4 +63,6 @@ def test_TwoHeadedRetinanet_train():
     
     batch = next(iter(ds))
     image_path, image, targets = batch
-    forward_pass = m(image, targets)    
+    forward_pass = m(image, targets)
+
+    
