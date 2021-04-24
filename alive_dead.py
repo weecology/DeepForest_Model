@@ -203,8 +203,13 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     #boxes.to_csv("{}/benchmark_predictions.csv".format(savedir))
     #comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir))
     
-    m.save_model("{}/hand_annotated.pl".format(savedir))
-    comet_logger.experiment.log_parameter("saved model", "{}/hand_annotated.pl".format(savedir))
+    try:
+        m.save_model("{}/hand_annotated.pl".format(savedir))
+        comet_logger.experiment.log_parameter("saved model", "{}/hand_annotated.pl".format(savedir))
+    except:
+        pass
+    
+    return m
 
              
 if __name__ == "__main__":
