@@ -27,7 +27,7 @@ def view_training(paths):
     
     comet_logger.experiment.add_tag("view_training")
     for x in paths:
-        ds = m.load_dataset(csv_file=x, root_dir=os.path.dirname(x), shuffle=True)
+        ds = m.load_dataset(csv_file=x, root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", shuffle=True)
         for i in np.arange(3):
             batch = next(iter(ds))
             image_path, image, targets = batch
