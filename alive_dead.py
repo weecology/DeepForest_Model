@@ -21,7 +21,7 @@ from src.predict_second_task import predict_file
 
 def view_training(paths):
     """For each site, grab three images and view annotations"""
-    m = main.deepforest(label_dict = {"Dead":0,"Alive":1})
+    m = main.deepforest(num_classes=2, label_dict = {"Dead":0,"Alive":1})
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest-pytorch", workspace="bw4sz")
     
