@@ -1,6 +1,8 @@
 #test alive dead
 import alive_dead
 from deepforest import main
+from deepforest import get_data
+import pandas as pd
 import os
 import torch
 
@@ -42,5 +44,10 @@ def test_train(tmpdir):
     assert_state_dict_equal(model_1 = original_model.model.head.classification_head.state_dict(), model_2=m.model.head.classification_head_task1.state_dict())
     assert_state_dict_equal(model_1 = original_model.model.head.regression_head.state_dict(), model_2=m.model.head.regression_head.state_dict())
     
+    #models should produce identical box predictions
+    img_path = get_data("OSBS_029.png")
+    original_boxes = original_model.predict_image(path=img_path)
+    final_boxes = m.predict_image(path=img_path)
+    pd.testing.assert_frame_equal(original_boxes.drop(columns="label"), final_boxes.drop(columns="label"))
     
-    
+    #But the new classification head should have updated weights
