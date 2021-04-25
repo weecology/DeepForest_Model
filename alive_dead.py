@@ -26,24 +26,17 @@ def view_training(paths):
                                   project_name="deepforest-pytorch", workspace="bw4sz")
     
     comet_logger.experiment.add_tag("view_training")
-    for site in paths:
-        for split in ["train","test"]:
-            try:
-                x = paths[site][split]
-                ds = m.load_dataset(csv_file=x, root_dir=os.path.dirname(x), shuffle=True)
-                for i in np.arange(3):
-                    batch = next(iter(ds))
-                    image_path, image, targets = batch
-                    df = visualize.format_boxes(targets[0], scores=False)
-                    image = np.moveaxis(image[0].numpy(),0,2)
-                    plot, ax = visualize.plot_predictions(image, df)
-                    with tempfile.TemporaryDirectory() as tmpdirname:
-                        plot.savefig("{}/{}".format(tmpdirname, image_path[0]), dpi=300)
-                        comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]))                
-            except Exception as e:
-                print(e)
-                continue
-            
+    for x in paths:
+        ds = m.load_dataset(csv_file=x, root_dir=os.path.dirname(x), shuffle=True)
+        for i in np.arange(3):
+            batch = next(iter(ds))
+            image_path, image, targets = batch
+            df = visualize.format_boxes(targets[0], scores=False)
+            image = np.moveaxis(image[0].numpy(),0,2)
+            plot, ax = visualize.plot_predictions(image, df)
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                plot.savefig("{}/{}".format(tmpdirname, image_path[0]), dpi=300)
+                comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]))                
 
 def assert_state_dict_not_equal(model_1, model_2):
     """Assert that two pytorch model state dicts are identical
@@ -269,5 +262,6 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
 
              
 if __name__ == "__main__":
+    view_training(paths=["/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv", "/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv"])
     train(train_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
           test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv", debug=True)
