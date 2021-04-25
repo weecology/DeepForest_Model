@@ -28,9 +28,8 @@ def view_training(paths):
     comet_logger.experiment.add_tag("view_training")
     for x in paths:
         ds = m.load_dataset(csv_file=x, root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", shuffle=True)
-        for i in np.arange(3):
-            batch = next(iter(ds))
-            image_path, image, targets = batch
+        for i in iter(ds):
+            image_path, image, targets = i
             df = visualize.format_boxes(targets[0], scores=False)
             image = np.moveaxis(image[0].numpy(),0,2)
             plot, ax = visualize.plot_predictions(image, df)

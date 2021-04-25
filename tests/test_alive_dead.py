@@ -51,3 +51,9 @@ def test_train(tmpdir):
     pd.testing.assert_frame_equal(original_boxes.drop(columns="label"), final_boxes.drop(columns="label"))
     
     #But the new classification head should have updated weights
+    
+def test_trained_evaluation():
+    """download a sample trained model to look at eval code"""
+    
+    trained_model = alive_dead.main.deepforest.load_from_checkpoint("snapshots/alive_dead.pl")
+    trained_model.label_dict()
