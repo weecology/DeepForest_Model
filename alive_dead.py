@@ -1,20 +1,64 @@
 #Alive Dead Model, optionally building from release tree crown model
 import comet_ml
+import copy
 from datetime import datetime
 from deepforest import main
 from deepforest import predict
+from deepforest import visualize
 from deepforest import evaluate as evaluate_iou
 import glob
 import random
+import numpy as np
 import os
 import pandas as pd
 from pytorch_lightning.loggers import CometLogger
 import time
 import torch
+import tempfile
 from torch import optim
 from TwoHeadedRetinanet import TwoHeadedRetinanet
 from src.predict_second_task import predict_file
 
+def view_training(paths):
+    """For each site, grab three images and view annotations"""
+    m = main.deepforest(label_dict = {"Dead":0,"Alive":1})
+    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
+                                  project_name="deepforest-pytorch", workspace="bw4sz")
+    
+    comet_logger.experiment.add_tag("view_training")
+    for x in paths:
+        ds = m.load_dataset(csv_file=x, root_dir=os.path.dirname(x), shuffle=True)
+        for i in np.arange(3):
+            batch = next(iter(ds))
+            image_path, image, targets = batch
+            df = visualize.format_boxes(targets[0], scores=False)
+            image = np.moveaxis(image[0].numpy(),0,2)
+            plot, ax = visualize.plot_predictions(image, df)
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                plot.savefig("{}/{}".format(tmpdirname, image_path[0]), dpi=300)
+                comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]))                
+
+def assert_state_dict_not_equal(model_1, model_2):
+    """Assert that two pytorch model state dicts are identical
+    from https://discuss.pytorch.org/t/two-models-with-same-weights-different-results/8918/7
+    Args:
+        model_1: a state_dict object from a model
+        model_2: a state_dict object from a 2nd model
+    Returns:
+        None: assertion that models are the same
+    """
+    models_differ = 0    
+    for key_item_1, key_item_2 in zip(model_1.items(), model_2.items()):
+        if torch.equal(key_item_1[1], key_item_2[1]):
+            pass
+        else:
+            models_differ += 1
+            if (key_item_1[0] == key_item_2[0]):
+                print('Mismtach found at', key_item_1[0])
+            else:
+                raise Exception
+    assert not models_differ == 0
+    
 #Overwrite default training logs and lr
 class alive_dead_module(main.deepforest):
     def __init__(self):
@@ -181,7 +225,12 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     
     m.create_trainer(logger=comet_logger)
     
+    #Assert that new regression head is training
+    original_state = copy.deepcopy(m.model.head.classification_head_task2.state_dict())
     m.trainer.fit(m)
+    trained_state = m.model.head.classification_head_task2.state_dict()
+    
+    assert_state_dict_not_equal(model_1=original_state, model_2=trained_state)
     
     result_dict = m.evaluate_mortality(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
     
@@ -212,5 +261,6 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
 
              
 if __name__ == "__main__":
+    view_training(paths=["/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv", "/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv"])
     train(train_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
           test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv")
