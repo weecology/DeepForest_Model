@@ -1,4 +1,6 @@
 #Test vanilla
+import comet_ml
+from pytorch_lightning.loggers import CometLogger
 from Dead import vanilla
 from deepforest import get_data
 import os
@@ -8,6 +10,12 @@ import matplotlib.pyplot as plt
 import torch
 
 def test_AliveDeadVanilla():
+    
+    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
+                                  project_name="deepforest-pytorch", workspace="bw4sz")
+        
+    comet_logger.experiment.add_tag("DeadAliveVanilla")    
+    
     train_dataset = vanilla.AliveDeadDataset(csv_file="/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_train.csv",
                                     root_dir="/Users/benweinstein/Documents/NeonTreeEvaluation/evaluation/RGB")
     
@@ -32,10 +40,13 @@ def test_AliveDeadVanilla():
     )
 
 
-    trainer = pl.Trainer(fast_dev_run=True)
+    trainer = pl.Trainer(fast_dev_run=True, logger=comet_logger)
     
     m = vanilla.AliveDeadVanilla()
     trainer.fit(m, train_dataloader=train_loader, val_dataloaders=test_loader)
+    
+    true_class, predicted_class = m.dataset_confusion(test_loader)
+    comet_logger.experiment.log_confusion_matrix(true_class, predicted_class,labels=["Alive","Dead"])
     
 def test_AliveDeadDataset():
     csv_file = get_data("OSBS_029.csv")

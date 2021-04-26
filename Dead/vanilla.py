@@ -10,6 +10,7 @@ from torch.utils.data import Dataset
 from pytorch_lightning.loggers import CometLogger
 from torchvision import models, transforms
 import matplotlib.pyplot as plt
+import torchmetrics
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -47,13 +48,11 @@ class AliveDeadDataset(Dataset):
         image = io.imread(img_name)
 
         # select annotations
-
-        box = image[selected_row.xmin:selected_row.xmax,selected_row.ymin:selected_row.ymax]
+        xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
+        box = image[xmin:xmax,ymin:ymax]
         
         # Labels need to be encoded
-        label = selected_row.label.apply(
-            lambda x: self.label_dict[x]).values.astype(int)
-        
+        label = self.label_dict[selected_row.label]
         box = self.transform(box)
 
         return box, label
@@ -63,33 +62,49 @@ class AliveDeadDataset(Dataset):
 class AliveDeadVanilla(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        self.resnet18 = models.resnet18()
+        self.model = models.resnet18()
+        self.accuracy = torchmetrics.Accuracy(multiclass=True)        
 
     def forward(self, x):
-        model_ft = self.resnet18(x)
-        num_ftrs = model_ft.fc.in_features
-        model_ft.fc = nn.Linear(num_ftrs, 2)
+        num_ftrs = self.model.fc.in_features
+        self.model.fc = nn.Linear(num_ftrs, 2)
+        pred = F.softmax(self.model(x))
+        
+        return pred
     
     def training_step(self, batch, batch_idx):
         x,y = batch
-        
         outputs = self.forward(x)
-        loss = nn.CrossEntropyLoss(outputs,y)
-        
-        self.log(loss)
+        loss = F.cross_entropy(outputs,y)
+        self.log("train_loss",loss)
         
     def validation_step(self, batch, batch_idx):
         x,y = batch
-        outputs = self.forward(x)
-        loss = nn.CrossEntropyLoss(outputs,y)
-        
+        outputs = self(x)
+        loss = F.cross_entropy(outputs,y)
         self.log("val_loss",loss)        
+        self.accuracy(outputs, y)
+ 
+    def validation_epoch_end(self, outputs):
+        self.log('val_acc', self.accuracy.compute())
         
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         
-        return optimizer        
+        return optimizer
     
+    def dataset_confusion(self, loader):
+        """Create a confusion matrix from a data loader"""
+        true_class = []
+        predicted_class = []
+        for batch in loader:
+            x,y = batch
+            true_class.append(F.one_hot(y,num_classes=2).numpy())
+            prediction = self(x)
+            predicted_class.append(prediction.numpy())
+        
+        return true_class, predicted_class
+            
 if __name__ == "__main__":
     #create train loader
     
@@ -107,6 +122,4 @@ if __name__ == "__main__":
     
     m = AliveDeadVanilla()
     trainer.fit(train_dataloader=train_loader, val_dataloaders=test_loader)
-    for batch in test_loader:
-        x,y = batch
-        
+    
