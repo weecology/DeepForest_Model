@@ -19,15 +19,16 @@ from torch import optim
 from TwoHeadedRetinanet import TwoHeadedRetinanet
 from src.predict_second_task import predict_file
 
-def view_training(paths):
+def view_training(paths, root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/"):
     """For each site, grab three images and view annotations"""
     m = main.deepforest(num_classes=2, label_dict = {"Dead":0,"Alive":1})
+    m.config["workers"] = 0
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest-pytorch", workspace="bw4sz")
     
     comet_logger.experiment.add_tag("view_training")
     for x in paths:
-        ds = m.load_dataset(csv_file=x, root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/", shuffle=True)
+        ds = m.load_dataset(csv_file=x, root_dir=root_dir, shuffle=True)
         for i in iter(ds):
             image_path, image, targets = i
             df = visualize.format_boxes(targets[0], scores=False)
