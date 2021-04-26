@@ -29,6 +29,11 @@ def assert_state_dict_equal(model_1, model_2):
         
 def test_train(tmpdir):
     os.environ['KMP_DUPLICATE_LIB_OK']='True'
+    
+    alive_dead.view_training(paths=["/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_test.csv",
+                                    "/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_train.csv"],
+                             root_dir="/Users/benweinstein/Documents/NeonTreeEvaluation/evaluation/RGB")
+    
     m = alive_dead.train(train_path="/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_train.csv",
                      test_path="/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_test.csv",
                      image_dir="/Users/benweinstein/Documents/NeonTreeEvaluation/evaluation/RGB",
@@ -50,10 +55,3 @@ def test_train(tmpdir):
     final_boxes = m.predict_image(path=img_path)
     pd.testing.assert_frame_equal(original_boxes.drop(columns="label"), final_boxes.drop(columns="label"))
     
-    #But the new classification head should have updated weights
-    
-def test_trained_evaluation():
-    """download a sample trained model to look at eval code"""
-    
-    trained_model = alive_dead.main.deepforest.load_from_checkpoint("snapshots/alive_dead.pl")
-    trained_model.label_dict()
