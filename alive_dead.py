@@ -135,7 +135,6 @@ class alive_dead_module(main.deepforest):
                  csv_file,
                  root_dir,
                  iou_threshold=None,
-                 show_plot=False,
                  savedir=None):
         """Compute intersection-over-union and precision/recall for a given iou_threshold
 
@@ -143,7 +142,6 @@ class alive_dead_module(main.deepforest):
             df: a pandas-type dataframe (geopandas is fine) with columns "name","xmin","ymin","xmax","ymax","label", each box in a row
             root_dir: location of files in the dataframe 'name' column.
             iou_threshold: float [0,1] intersection-over-union union between annotation and prediction to be scored true positive
-            show_plot: open a blocking matplotlib window to show plot and annotations, useful for debugging.
             savedir: optional path dir to save evaluation images
         Returns:
             results: dict of ("results", "precision", "recall") for a given threshold
@@ -170,8 +168,7 @@ class alive_dead_module(main.deepforest):
         results = evaluate_iou.evaluate(predictions=predictions,
                                         ground_df=ground_df,
                                         root_dir=root_dir,
-                                        iou_threshold=iou_threshold,
-                                        show_plot=show_plot)
+                                        iou_threshold=iou_threshold)
 
         return results        
         
