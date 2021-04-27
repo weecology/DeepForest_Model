@@ -209,7 +209,6 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
     m.config["train"]["root_dir"] = image_dir
     m.config["validation"]["csv_file"] = test_path
     m.config["validation"]["root_dir"] = image_dir
-    
     if debug:
         m.config["train"]["fast_dev_run"] = True
         m.config["gpus"] = None
@@ -261,4 +260,4 @@ def train(train_path, test_path, pretrained=False, image_dir = "/orange/idtrees-
 if __name__ == "__main__":
     view_training(paths=["/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv", "/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv"])
     train(train_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
-          test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv", debug=True)
+          test_path="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv")

@@ -1,7 +1,8 @@
 ##Vanilla alive dead model
+import pandas as pd
+import comet_ml
 import os
 import pytorch_lightning as pl
-import pandas as pd
 from skimage import io
 import numpy as np
 import torch
