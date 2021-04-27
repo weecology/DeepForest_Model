@@ -22,7 +22,7 @@ def get_transform(augment):
     data_transforms = []
     data_transforms.append(transforms.ToTensor())
     data_transforms.append(normalize)
-    data_transforms.append(transforms.Resize(224))
+    data_transforms.append(transforms.Resize([224,224]))
     if augment:
         data_transforms.append(transforms.RandomHorizontalFlip(0.5))
     return transforms.Compose(data_transforms)
