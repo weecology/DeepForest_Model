@@ -195,6 +195,8 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     comet_logger.experiment.log_metric("Dead Recall", dead_recall)
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
+    trainer.save_checkpoint("/orange/idtrees-collab/DeepTreeAttention/Dead/{}".format(comet_logger.experiment.get_key()))
+    
 if __name__ == "__main__":
     run(alive_weight=10)
     
