@@ -115,10 +115,10 @@ if __name__ == "__main__":
     #create train loader
     
     train_loader = AliveDeadDataset(csv_file="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
-                                    root_dir="/orange/idtrees-collab/DeepTreeAttention/data/")
+                                    root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/")
     
     test_loader = AliveDeadDataset(csv_file="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv",
-                                    root_dir="/orange/idtrees-collab/DeepTreeAttention/data/")    
+                                    root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/")    
     
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest-pytorch", workspace="bw4sz")
