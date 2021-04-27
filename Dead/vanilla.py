@@ -119,29 +119,46 @@ class AliveDeadVanilla(pl.LightningModule):
         predicted_class = np.concatenate(predicted_class)
 
         return true_class, predicted_class
-            
-if __name__ == "__main__":
-    #create train loader
     
-    train_dataset = AliveDeadDataset(csv_file="/orange/idtrees-collab/DeepTreeAttention/data/dead_train.csv",
-                                    root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/")
+def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
+        root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
+        alive_weight=None, gpus=1, num_workers=5, batch_size=128, fast_dev_run=False):    
     
-
+    train_dataset = AliveDeadDataset(csv_file="{}/dead_train.csv".format(csv_dir),
+                                    root_dir=root_dir)
+    #upsample rare classes
+    if alive_weight:
+        class_weights = {}
+        class_weights[0] = alive_weight
+        class_weights[1] = 1
+        
+        data_weights = []
+        for i in range(len(train_dataset)):
+            image, label = train_dataset[i]
+            data_weights.append(1/class_weights[label])
+        
+        sampler = torch.utils.data.sampler.WeightedRandomSampler(weights = data_weights, num_samples=len(train_dataset))
+        shuffle=False
+    else:
+        sampler = None
+        shuffle = True
+    
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size=128,
-        shuffle=True,
-        num_workers=5
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        sampler=sampler
     )
     
-    test_dataset = AliveDeadDataset(csv_file="/orange/idtrees-collab/DeepTreeAttention/data/dead_test.csv",
-                                    root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/")    
+    test_dataset = AliveDeadDataset(csv_file="{}/dead_test.csv".format(csv_dir),
+                                    root_dir=root_dir)    
 
     test_loader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=128,
+        batch_size=batch_size,
         shuffle=False,
-        num_workers=5
+        num_workers=num_workers
     )
 
     
@@ -160,7 +177,7 @@ if __name__ == "__main__":
         comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
         counter+=1
 
-    trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=20)
+    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=20, fast_dev_run=fast_dev_run)
     
     m = AliveDeadVanilla()
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
@@ -171,7 +188,15 @@ if __name__ == "__main__":
     df = pd.DataFrame({"true_class":np.argmax(true_class,1),"predicted_class":np.argmax(predicted_class,1)})
     true_dead = df[df.true_class == 1]
     dead_recall = true_dead[true_dead.true_class==true_dead.predicted_class].shape[0]/true_dead.shape[0]
-    dead_precision = true_dead[true_dead.true_class==true_dead.predicted_class].shape[0]/df[df.predicted_class==1].shape[0]
+    if not df[df.predicted_class==1].empty:
+        dead_precision = true_dead[true_dead.true_class==true_dead.predicted_class].shape[0]/df[df.predicted_class==1].shape[0]
+    else:
+        dead_precision = 0
     comet_logger.experiment.log_metric("Dead Recall", dead_recall)
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
+    
+if __name__ == "__main__":
+    run(alive_weight=10)
+    
+
     
