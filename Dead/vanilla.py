@@ -143,7 +143,7 @@ if __name__ == "__main__":
     trainer = pl.Trainer(logger=comet_logger)
     
     m = AliveDeadVanilla()
-    trainer.fit(train_dataloader=train_loader, val_dataloaders=test_loader)
+    trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
     
     true_class, predicted_class = m.dataset_confusion(test_loader)
     comet_logger.experiment.log_confusion_matrix(true_class, predicted_class,labels=["Alive","Dead"])
