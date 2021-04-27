@@ -29,18 +29,17 @@ def test_AliveDeadVanilla():
     )
 
     #Log a few training images
-    counter=0
-    while counter < 20:
-        for batch in iter(train_dataset):
-            image, label = batch 
-            image = image.permute(1, 2, 0).numpy()
-            comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
-            counter+1
-            
+    counter=0        
+    for batch in iter(train_dataset):
+        if counter > 20:
+            break
+        image, label = batch 
+        image = image.permute(1, 2, 0).numpy()
+        comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
+        counter+=1
     
     test_dataset = vanilla.AliveDeadDataset(csv_file="/Users/benweinstein/Dropbox/Weecology/TreeDetectionZooniverse/dead_test.csv",
                                     root_dir="/Users/benweinstein/Documents/NeonTreeEvaluation/evaluation/RGB")    
-
 
     test_loader = torch.utils.data.DataLoader(
         test_dataset,
@@ -48,7 +47,6 @@ def test_AliveDeadVanilla():
         shuffle=True,
         num_workers=0
     )
-
 
     trainer = pl.Trainer(fast_dev_run=True, logger=comet_logger)
     

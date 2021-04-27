@@ -52,6 +52,12 @@ class AliveDeadDataset(Dataset):
 
         # select annotations
         xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
+        
+        xmin = np.max([0,xmin-5])
+        xmax = np.min([image.shape[1],xmax+5])
+        ymin = np.max([0,ymin-5])
+        ymax = np.min([image.shape[0],ymax+5])
+        
         box = image[ymin:ymax, xmin:xmax]
         
         # Labels need to be encoded
@@ -148,7 +154,7 @@ if __name__ == "__main__":
             image, label = batch 
             image = image.permute(1, 2, 0).numpy()
             comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
-            counter+1
+            counter+=1
 
     trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=20)
     
