@@ -140,7 +140,7 @@ if __name__ == "__main__":
                                   project_name="deepforest-pytorch", workspace="bw4sz")
         
     comet_logger.experiment.add_tag("DeadAliveVanilla")    
-    trainer = pl.Trainer(logger=comet_logger)
+    trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=20)
     
     m = AliveDeadVanilla()
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
