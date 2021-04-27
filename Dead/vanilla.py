@@ -160,7 +160,7 @@ if __name__ == "__main__":
         comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
         counter+=1
 
-    trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=20)
+    trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=30)
     
     m = AliveDeadVanilla()
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
