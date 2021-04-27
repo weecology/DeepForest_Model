@@ -72,12 +72,13 @@ class AliveDeadVanilla(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.model = models.resnet18()
+        num_ftrs = self.model.fc.in_features
+        self.model.fc = nn.Linear(num_ftrs, 2)        
         self.accuracy = torchmetrics.Accuracy(multiclass=True)        
 
     def forward(self, x):
-        num_ftrs = self.model.fc.in_features
-        self.model.fc = nn.Linear(num_ftrs, 2)
-        pred = F.softmax(self.model(x))
+        output = self.model(x)
+        pred = F.softmax(output)
         
         return pred
     
