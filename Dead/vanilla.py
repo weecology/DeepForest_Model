@@ -148,13 +148,14 @@ if __name__ == "__main__":
     comet_logger.experiment.add_tag("DeadAliveVanilla")    
     
     #Log a few training images
-    counter=0
-    while counter < 20:
-        for batch in iter(train_dataset):
-            image, label = batch 
-            image = image.permute(1, 2, 0).numpy()
-            comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
-            counter+=1
+    counter=0        
+    for batch in iter(train_dataset):
+        if counter > 20:
+            break
+        image, label = batch 
+        image = image.permute(1, 2, 0).numpy()
+        comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
+        counter+=1
 
     trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=20)
     
