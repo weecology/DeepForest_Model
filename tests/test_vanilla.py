@@ -8,6 +8,7 @@ import pandas as pd
 import pytorch_lightning as pl
 import matplotlib.pyplot as plt
 import torch
+import numpy as np
 
 def test_AliveDeadVanilla():
     
@@ -48,17 +49,11 @@ def test_AliveDeadVanilla():
     true_class, predicted_class = m.dataset_confusion(test_loader)
     comet_logger.experiment.log_confusion_matrix(true_class, predicted_class,labels=["Alive","Dead"])
     
-def test_AliveDeadDataset():
-    csv_file = get_data("OSBS_029.csv")
-    ds = vanilla.AliveDeadDataset(csv_file=csv_file, root_dir=os.path.dirname(csv_file))
+    df = pd.DataFrame({"true_class":np.argmax(true_class,1),"predicted_class":np.argmax(predicted_class,1)})
+    true_dead = df[df.true_class == 1]
+    dead_recall = true_dead[true_dead.true_class==true_dead.predicted_class].shape[0]/true_dead.shape[0]
+    dead_precision = df[df.predicted_class==1].shape[0]/true_dead.shape[0] 
+    comet_logger.experiment.log_metric("Dead Recall", dead_recall)
+    comet_logger.experiment.log_metric("Dead Predicision", dead_precision)
     
-    df = pd.read_csv(csv_file)
-    assert len(ds) == len(df)
-        
-    for batch in iter(ds):
-        box, label = batch  
-        plt.imshow(box)
-        plt.title('{}'.format(label))
-    
-    
-    
+                      

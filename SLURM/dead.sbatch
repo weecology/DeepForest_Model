@@ -14,7 +14,8 @@
 
 source activate Zooniverse_pytorch
 #modue load cuda
-cd /home/b.weinstein/DeepForest_Model/
+cd /home/b.weinstein/DeepForest_Model/Dead
 
 #comet debug
-python alive_dead.py
+#python alive_dead.py
+python vanilla.py

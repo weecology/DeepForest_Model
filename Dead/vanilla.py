@@ -3,6 +3,7 @@ import os
 import pytorch_lightning as pl
 import pandas as pd
 from skimage import io
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -11,6 +12,7 @@ from pytorch_lightning.loggers import CometLogger
 from torchvision import models, transforms
 import matplotlib.pyplot as plt
 import torchmetrics
+
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -99,10 +101,13 @@ class AliveDeadVanilla(pl.LightningModule):
         predicted_class = []
         for batch in loader:
             x,y = batch
-            true_class.append(F.one_hot(y,num_classes=2).numpy())
+            true_class.append(F.one_hot(y,num_classes=2).detach().numpy())
             prediction = self(x)
-            predicted_class.append(prediction.numpy())
+            predicted_class.append(prediction.detach().numpy())
         
+        true_class = np.concatenate(true_class)
+        predicted_class = np.concatenate(predicted_class)
+
         return true_class, predicted_class
             
 if __name__ == "__main__":
@@ -122,4 +127,14 @@ if __name__ == "__main__":
     
     m = AliveDeadVanilla()
     trainer.fit(train_dataloader=train_loader, val_dataloaders=test_loader)
+    
+    true_class, predicted_class = m.dataset_confusion(test_loader)
+    comet_logger.experiment.log_confusion_matrix(true_class, predicted_class,labels=["Alive","Dead"])
+    
+    df = pd.DataFrame({"true_class":np.argmax(true_class,1),"predicted_class":np.argmax(predicted_class,1)})
+    true_dead = df[df.true_class == 1]
+    dead_recall = true_dead[true_dead.true_class==true_dead.predicted_class].shape[0]/true_dead.shape[0]
+    dead_precision = true_dead[true_dead.true_class==true_dead.predicted_class].shape[0]/df[df.predicted_class==1].shape[0]
+    comet_logger.experiment.log_metric("Dead Recall", dead_recall)
+    comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
