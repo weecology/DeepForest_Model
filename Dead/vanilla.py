@@ -88,6 +88,8 @@ class AliveDeadVanilla(pl.LightningModule):
         loss = F.cross_entropy(outputs,y)
         self.log("train_loss",loss)
         
+        return loss
+        
     def validation_step(self, batch, batch_idx):
         x,y = batch
         outputs = self(x)
@@ -127,7 +129,7 @@ if __name__ == "__main__":
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size=10,
+        batch_size=128,
         shuffle=True,
         num_workers=5
     )
@@ -137,7 +139,7 @@ if __name__ == "__main__":
 
     test_loader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=10,
+        batch_size=128,
         shuffle=False,
         num_workers=5
     )
