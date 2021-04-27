@@ -52,7 +52,7 @@ class AliveDeadDataset(Dataset):
 
         # select annotations
         xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
-        box = image[xmin:xmax,ymin:ymax]
+        box = image[ymin-5:ymax+5, xmin-5:xmax+5]
         
         # Labels need to be encoded
         label = self.label_dict[selected_row.label]
@@ -140,6 +140,16 @@ if __name__ == "__main__":
                                   project_name="deepforest-pytorch", workspace="bw4sz")
         
     comet_logger.experiment.add_tag("DeadAliveVanilla")    
+    
+    #Log a few training images
+    counter=0
+    while counter < 20:
+        for batch in iter(train_dataset):
+            image, label = batch 
+            image = image.permute(1, 2, 0).numpy()
+            comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
+            counter+1
+
     trainer = pl.Trainer(logger=comet_logger, gpus=1, max_epochs=20)
     
     m = AliveDeadVanilla()
