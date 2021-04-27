@@ -52,7 +52,7 @@ class AliveDeadDataset(Dataset):
 
         # select annotations
         xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
-        box = image[ymin-5:ymax+5, xmin-5:xmax+5]
+        box = image[ymin:ymax, xmin:xmax]
         
         # Labels need to be encoded
         label = self.label_dict[selected_row.label]
