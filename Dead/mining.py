@@ -37,8 +37,8 @@ def mine_dead(shp, image_path, model_path, savedir):
             
             left = row.left - 3
             right = row.right + 3
-            bottom = row.bottom + 3
-            top = row.top - 3
+            bottom = row.bottom - 3
+            top = row.top + 3
             
             rst = src.read(window = from_bounds(left, bottom, right, top, src.transform))
     
@@ -58,7 +58,7 @@ def mine_dead(shp, image_path, model_path, savedir):
             
             #if Dead, keep
             if label == 1:
-                cv2.imwrite("{}/{}_{}.png".format(savedir, basename,index), np.rollaxis(rst,0,3))
+                cv2.imwrite("{}/{}_{}.png".format(savedir, basename,index), np.rollaxis(rst,0,3)[:,:,::-1])
                 counter = counter +1
     
     return "Found {} dead trees in {}".format(counter, basename)
