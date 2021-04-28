@@ -35,10 +35,10 @@ def mine_dead(shp, image_path, model_path, savedir):
     with rio.open(image_path) as src:
         for index, row in df.iterrows():
             
-            left = row.left - 3
-            right = row.right + 3
-            bottom = row.bottom - 3
-            top = row.top + 3
+            left = row.left - 2
+            right = row.right + 2
+            bottom = row.bottom - 2
+            top = row.top + 2
             
             rst = src.read(window = from_bounds(left, bottom, right, top, src.transform))
     
@@ -86,7 +86,7 @@ if __name__ == "__main__":
             future = client.submit(mine_dead,
                           image_path = rgb_dict[basename],
                           shp=x,
-                          model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/0259353ec76448b590eec0cb6536734d",
+                          model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
                           savedir="/orange/idtrees-collab/mining/")
             futures.append(future)
     
