@@ -8,6 +8,7 @@ import cv2
 import rasterio as rio
 import numpy as np
 import os
+import re
 import torch
 from distributed import wait
 
