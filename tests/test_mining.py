@@ -9,7 +9,7 @@ from vanilla import AliveDeadVanilla
 def test_mine_dead(tmpdir):
     
     m = AliveDeadVanilla()
-    torch.save(m.state_dict(),"{}/model.pt".format(tmpdir))
+    torch.save(m.model.state_dict(),"{}/model.pt".format(tmpdir))
     model_path = "{}/model.pt".format(tmpdir)
     
     image_path = "Dead/data/SOAP_052_2018.tif"
