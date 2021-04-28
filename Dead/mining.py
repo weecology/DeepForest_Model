@@ -49,7 +49,7 @@ def mine_dead(shp, image_path, model_path, savedir):
 if __name__ == "__main__":
     client = start_cluster.start(gpus=1)
     shpfiles = glob.glob("/orange/idtrees-collab/draped/*.shp")
-    rgb_pool = glob.glob("/orange/ewhite/NeonData/**/Camera/**/*.tif")
+    rgb_pool = glob.glob("/orange/ewhite/NeonData/**/Camera/**/*.tif",recursive=True)
     rgb_dict = {}
     for x in rgb_pool:
         basename = os.path.splitext(os.path.basename(x))[0]

@@ -1,8 +1,10 @@
 #test mining
-from Dead import mining
+import sys
+sys.path.insert(0, "Dead")
+import mining
 import torch
 import geopandas as gpd
-from Dead.vanilla import AliveDeadVanilla  
+from vanilla import AliveDeadVanilla  
 
 def test_mine_dead(tmpdir):
     
