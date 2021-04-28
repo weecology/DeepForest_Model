@@ -46,9 +46,12 @@ def mine_dead(shp, image_path, model_path, savedir):
             image = transform(np.rollaxis(rst,0,3))
             
             if torch.cuda.is_available():
-                image = image.cuda(0)            
-            prediction = m(image.unsqueeze(0))
-            label = np.argmax(prediction.detach())
+                image = image.cuda(0)     
+                prediction = m(image.unsqueeze(0))
+                label = np.argmax(prediction.cpu().detach())
+            else:
+                prediction = m(image.unsqueeze(0))
+                label = np.argmax(prediction.cpu().detach())                
             
             #if Dead, keep
             if label == 1:
