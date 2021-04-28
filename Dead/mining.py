@@ -80,7 +80,7 @@ if __name__ == "__main__":
             site_lists[get_site(x)] = [x]
             
     futures = []
-    for site in site_lists[:4]:
+    for site in site_lists:
         for x in site_lists[site][:2]:
             basename = os.path.splitext(os.path.basename(x))[0]
             future = client.submit(mine_dead,
