@@ -56,7 +56,9 @@ if __name__ == "__main__":
         rgb_dict[basename] = x
     
     for x in shpfiles[0]:
+        print(x)
         basename = os.path.splitext(os.path.basename(x))[0]
+        print(basename)
         client.submit(mine_dead,
                       image_path = rgb_dict[basename],
                       shp=x,
