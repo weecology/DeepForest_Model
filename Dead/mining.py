@@ -46,7 +46,7 @@ def mine_dead(shp, image_path, model_path, savedir):
             try:
                 image = transform(np.rollaxis(rst,0,3))
             except Exception:
-                pass
+                continue
             
             if torch.cuda.is_available():
                 image = image.cuda(0)     
