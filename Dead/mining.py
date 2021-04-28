@@ -35,6 +35,9 @@ def mine_dead(shp, image_path, model_path, savedir):
     with rio.open(image_path) as src:
         for index, row in df.iterrows():
             
+            if counter > 20:
+                break
+            
             left = row.left - 2
             right = row.right + 2
             bottom = row.bottom - 2
