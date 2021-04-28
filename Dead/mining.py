@@ -30,7 +30,7 @@ def mine_dead(shp, image_path, model_path, savedir):
         m = m.eval()
         
     df = gpd.read_file(shp)
-    basename = os.path.splitext(os.path.basename(df.shp_path[0]))[0]
+    basename = os.path.splitext(os.path.basename(shp))[0]
     counter = 0
     with rio.open(image_path) as src:
         for index, row in df.iterrows():

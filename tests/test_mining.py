@@ -7,11 +7,7 @@ import geopandas as gpd
 from vanilla import AliveDeadVanilla  
 
 def test_mine_dead(tmpdir):
-    
-    m = AliveDeadVanilla()
-    torch.save(m.model.state_dict(),"{}/model.pt".format(tmpdir))
-    model_path = "{}/model.pt".format(tmpdir)
-    
+    model_path = "snapshots/"
     image_path = "Dead/data/SOAP_052_2018.tif"
     shp = gpd.read_file("Dead/data/SOAP_052_2018_327863759.shp")
     shp["shp_path"] = "Dead/data/SOAP_052_2018_327863759.shp"
