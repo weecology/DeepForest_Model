@@ -10,7 +10,7 @@ import numpy as np
 import os
 import re
 import torch
-from distributed import wait
+from distributed import wait, as_completed
 
 #csv file format is left,bottom,right,top,score,label,height,area,shp_path,geo_index,Year,Site
 def get_site(path):
@@ -32,6 +32,7 @@ def mine_dead(shp, image_path, model_path, savedir):
         
     df = gpd.read_file(shp)
     basename = os.path.splitext(os.path.basename(df.shp_path[0]))[0]
+    counter = 0
     with rio.open(image_path) as src:
         for index, row in df.iterrows():
             
@@ -53,7 +54,9 @@ def mine_dead(shp, image_path, model_path, savedir):
             #if Dead, keep
             if label == 1:
                 cv2.imwrite("{}/{}_{}.png".format(savedir, basename,index), np.rollaxis(rst,0,3))
-                
+                counter = counter +1
+    
+    return "Found {} dead trees in {}".format(counter, basename)
 if __name__ == "__main__":
     client = start_cluster.start(gpus=1)
     shpfiles = glob.glob("/orange/idtrees-collab/draped/*.shp")
@@ -71,13 +74,18 @@ if __name__ == "__main__":
         except:
             site_lists[get_site(x)] = [x]
             
+    futures = []
     for site in site_lists:
         for x in site_lists[site][:2]:
             basename = os.path.splitext(os.path.basename(x))[0]
-            futures = client.submit(mine_dead,
+            future = client.submit(mine_dead,
                           image_path = rgb_dict[basename],
                           shp=x,
                           model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/0259353ec76448b590eec0cb6536734d",
                           savedir="/orange/idtrees-collab/mining/")
-    wait(futures)
+            futures.append(future)
+    
+    for x in as_completed(futures):
+        print(x.result())
+    
     
