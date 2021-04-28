@@ -53,10 +53,10 @@ class AliveDeadDataset(Dataset):
         # select annotations
         xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
         
-        xmin = np.max([0,xmin-20])
-        xmax = np.min([image.shape[1],xmax+20])
-        ymin = np.max([0,ymin-20])
-        ymax = np.min([image.shape[0],ymax+20])
+        xmin = np.max([0,xmin-30])
+        xmax = np.min([image.shape[1],xmax+30])
+        ymin = np.max([0,ymin-30])
+        ymax = np.min([image.shape[0],ymax+30])
         
         box = image[ymin:ymax, xmin:xmax]
         
