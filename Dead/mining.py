@@ -9,8 +9,15 @@ import rasterio as rio
 import numpy as np
 import os
 import torch
+from distributed import wait
 
 #csv file format is left,bottom,right,top,score,label,height,area,shp_path,geo_index,Year,Site
+def get_site(path):
+    basename = os.path.basename(path)
+    site = re.search("^\d+_(\w+)_\d_", basename).group(1)
+    return site
+
+
 def mine_dead(shp, image_path, model_path, savedir):
     """Apply mining to a single image_path"""
     m = AliveDeadVanilla()
@@ -54,14 +61,22 @@ if __name__ == "__main__":
     for x in rgb_pool:
         basename = os.path.splitext(os.path.basename(x))[0]
         rgb_dict[basename] = x
-    
-    for x in shpfiles[0]:
-        print(x)
-        basename = os.path.splitext(os.path.basename(x))[0]
-        print(basename)
-        client.submit(mine_dead,
-                      image_path = rgb_dict[basename],
-                      shp=x,
-                      model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/0259353ec76448b590eec0cb6536734d",
-                      savedir="/orange/idtrees-collab/mining/")
+
+    #get one from each site
+    site_lists = {}
+    for x in shpfiles:
+        try:
+            site_lists[get_site(x)].append(x)
+        except:
+            site_lists[get_site(x)] = [x]
+            
+    for site in site_lists:
+        for x in site_lists[site][:2]:
+            basename = os.path.splitext(os.path.basename(x))[0]
+            futures = client.submit(mine_dead,
+                          image_path = rgb_dict[basename],
+                          shp=x,
+                          model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/0259353ec76448b590eec0cb6536734d",
+                          savedir="/orange/idtrees-collab/mining/")
+    wait(futures)
     
