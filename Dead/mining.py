@@ -35,10 +35,10 @@ def mine_dead(shp, image_path, model_path, savedir):
     with rio.open(image_path) as src:
         for index, row in df.iterrows():
             
-            left = row.left - 0.5
-            right = row.right + 0.5
-            bottom = row.bottom + 0.5
-            top = row.top - 0.5
+            left = row.left - 3
+            right = row.right + 3
+            bottom = row.bottom + 3
+            top = row.top - 3
             
             rst = src.read(window = from_bounds(left, bottom, right, top, src.transform))
     
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             site_lists[get_site(x)] = [x]
             
     futures = []
-    for site in site_lists:
+    for site in site_lists[:4]:
         for x in site_lists[site][:2]:
             basename = os.path.splitext(os.path.basename(x))[0]
             future = client.submit(mine_dead,
