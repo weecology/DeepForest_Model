@@ -22,7 +22,7 @@ def get_site(path):
 def mine_dead(shp, image_path, model_path, savedir):
     """Apply mining to a single image_path"""
     m = AliveDeadVanilla()
-    m.model.load_state_dict(torch.load(model_path))
+    m.load_state_dict(torch.load(model_path))
     transform = get_transform(augment=False)
     
     if torch.cuda.is_available():
