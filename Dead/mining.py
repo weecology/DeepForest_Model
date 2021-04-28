@@ -43,7 +43,10 @@ def mine_dead(shp, image_path, model_path, savedir):
             rst = src.read(window = from_bounds(left, bottom, right, top, src.transform))
     
             #preprocess
-            image = transform(np.rollaxis(rst,0,3))
+            try:
+                image = transform(np.rollaxis(rst,0,3))
+            except Exception:
+                pass
             
             if torch.cuda.is_available():
                 image = image.cuda(0)     
