@@ -29,7 +29,7 @@ def get_transform(augment):
 
 class AliveDeadDataset(Dataset):
 
-    def __init__(self, csv_file, root_dir, label_dict = {"Alive": 0,"Dead":1}, augment=False):
+    def __init__(self, csv_file, root_dir, label_dict = {"Alive": 0,"Dead":1}, augment=False, train=True):
         """
         Args:
             csv_file (string): Path to a single csv file with annotations.
@@ -41,6 +41,7 @@ class AliveDeadDataset(Dataset):
         self.image_names = self.annotations.image_path.unique()
         self.label_dict = label_dict
         self.transform = get_transform(augment=augment)
+        self.train = train
 
     def __len__(self):
         return self.annotations.shape[0]
@@ -53,19 +54,20 @@ class AliveDeadDataset(Dataset):
         # select annotations
         xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
         
-        xmin = np.max([0,xmin-30])
-        xmax = np.min([image.shape[1],xmax+30])
-        ymin = np.max([0,ymin-30])
-        ymax = np.min([image.shape[0],ymax+30])
+        xmin = np.max([0,xmin-20])
+        xmax = np.min([image.shape[1],xmax+20])
+        ymin = np.max([0,ymin-20])
+        ymax = np.min([image.shape[0],ymax+20])
         
         box = image[ymin:ymax, xmin:xmax]
-        
-        # Labels need to be encoded
-        label = self.label_dict[selected_row.label]
         box = self.transform(box)
-
-        return box, label
-    
+        
+        # Labels need to be encoded if supplied
+        if self.train:
+            label = self.label_dict[selected_row.label]
+            return box, label
+        else:
+            return box
     
 #Lightning Model
 class AliveDeadVanilla(pl.LightningModule):
