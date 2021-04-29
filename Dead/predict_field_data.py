@@ -6,6 +6,7 @@ import torch
 from deepforest import main
 from deepforest.utilities import project_boxes
 
+import matplotlib as plt
 import numpy as np
 import geopandas as gpd
 import seaborn as sns
@@ -249,5 +250,4 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     g = sns.countplot(
         data=results,
         x="plantStatus", hue="Dead", palette="dark")
-    
-    g.savefig("Dead/figures/plantStatus.png")
+    plt.savefig("Dead/figures/plantStatus.png")
