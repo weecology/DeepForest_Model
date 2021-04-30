@@ -267,9 +267,9 @@ if __name__ == "__main__":
     results = run(
         checkpoint_path="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
         image_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB",
-        savedir="Dead/figures/",
-        field_path="Dead/data/neon_vst_data_2021.csv",
+        savedir="/figures/",
+        field_path="/data/neon_vst_data_2021.csv",
         num_workers=10,
     debug=True)
-    results.to_csv("Dead/figures/results.csv")
+    results.to_csv("/figures/results.csv")
         
