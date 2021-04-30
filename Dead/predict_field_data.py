@@ -130,7 +130,6 @@ def load_field_data(field_path, debug=False):
     field = field[~field.growthForm.isin(["liana","small shrub"])]
     field = field[~field.growthForm.isnull()]
     field = field[~field.plantStatus.isnull()]        
-    field = field[field.plantStatus.str.contains("Live")]    
     
     groups = field.groupby("individualID")
     shaded_ids = []
