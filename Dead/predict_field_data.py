@@ -232,7 +232,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     dataset = vanilla.AliveDeadDataset(csv_file = "{}/trees.csv".format(savedir), root_dir=image_dir, label_dict={"Tree":0}, train=False)
     test_loader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=10,
+        batch_size=100,
         shuffle=False,
         num_workers=num_workers
     )     
@@ -279,5 +279,5 @@ if __name__ == "__main__":
         savedir="figures/",
         field_path="data/neon_vst_data_2021.csv",
         num_workers=10,
-    debug=True)
+    debug=False)
     results.to_csv("figures/results.csv")
