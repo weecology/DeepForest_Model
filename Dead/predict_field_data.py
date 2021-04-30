@@ -202,7 +202,10 @@ def predict_trees(tree_detector, image_paths):
 def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_filter=False, debug=False):
     """For each field plot, predict the location of trees and their alive dead class, join to the spatial data and compare to field tag"""
     dead_model = vanilla.AliveDeadVanilla.load_from_checkpoint(checkpoint_path)
-    dead_model.eval()
+    
+    if torch.cuda.is_available():
+        dead_model = dead_model.to("cuda")
+        dead_model.eval()
     
     tree_detector = main.deepforest()
     tree_detector.use_release()
@@ -236,6 +239,8 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     
     gather_predictions = []
     for batch in test_loader:
+        if torch.cuda.is_available():
+            batch = batch.to("cuda")        
         predictions = dead_model(batch)
         gather_predictions.append(predictions.detach().cpu())
     
