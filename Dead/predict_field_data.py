@@ -210,7 +210,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     tree_detector.use_release()
     
     field = load_field_data(field_path, debug=debug)
-    
+    print("loaded field data")
     if debug:
         field = field[field.plotID=="SJER_052"]
         
@@ -223,7 +223,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     image_paths =  field.image_path.unique()
     boxes = predict_trees(tree_detector, image_paths)
     boxes.to_csv("{}/trees.csv".format(savedir))
-    
+    print("trees predicted")
     if canopy_filter:
         lookup_glob = "/orange/ewhite/NeonData/**/CanopyHeightModelGtif/*.tif"
         shp = filter_CHM(shp, lookup_glob)
@@ -242,7 +242,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
             batch = batch.to("cuda")        
         predictions = dead_model(batch)
         gather_predictions.append(predictions.detach().cpu())
-    
+    print("dead trees predicted")
     #TODO confirm this is the correct axis
     gather_predictions = np.concatenate(gather_predictions)
     
