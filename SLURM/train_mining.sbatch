@@ -15,7 +15,7 @@
 source activate Zooniverse_pytorch
 
 #modue load cuda
-cd /home/b.weinstein/DeepForest_Model/Dead
+cd /home/b.weinstein/DeepForest_Model/
 
 #comet debug
-python train_on_mining.py
+python Dead/train_on_mining.py
