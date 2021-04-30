@@ -226,7 +226,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     print("trees predicted")
     if canopy_filter:
         lookup_glob = "/orange/ewhite/NeonData/**/CanopyHeightModelGtif/*.tif"
-        shp = filter_CHM(shp, lookup_glob)
+        field = filter_CHM(field, lookup_glob)
     
     dataset = vanilla.AliveDeadDataset(csv_file = "{}/trees.csv".format(savedir), root_dir=image_dir, label_dict={"Tree":0}, train=False)
     test_loader = torch.utils.data.DataLoader(
@@ -272,6 +272,8 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
         x="plantStatus", hue="Dead", palette="dark")
     fig = g.get_figure()
     fig.savefig("figures/plantStatus.png")
+    
+    #Plot trees that are incorrect
     
     return results
 
