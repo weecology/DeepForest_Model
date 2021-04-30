@@ -254,7 +254,11 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
         field_plot.set_crs = group["epsg"]
         field_plot = field_plot[["utmZone","individualID","taxonID","siteID","plotID","plantStatus","geometry"]]
         trees = boxes[boxes.image_path == os.path.basename(name)]    
-        trees = project_boxes(trees, root_dir=image_dir)
+        try:
+            trees = project_boxes(trees, root_dir=image_dir)
+        except Exception as e:
+            print("{} raised {}".format(name,e))
+            continue
         
         df = gpd.sjoin(trees, field_plot)
         results.append(pd.DataFrame(df))
