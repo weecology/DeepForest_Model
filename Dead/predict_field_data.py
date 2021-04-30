@@ -1,5 +1,5 @@
 #Compare alive/dead predictions to NEON field data
-from Dead import vanilla
+import vanilla
 import os
 import pandas as pd
 import torch
@@ -18,6 +18,12 @@ import math
 from pyproj import CRS
 
 
+def find_image(plotID, image_pool):
+    try:
+        [x for x in image_pool if plotID in x][-1]
+    except:
+        return None
+    
 def bounds_to_geoindex(bounds):
     """Convert an extent into NEONs naming schema
     Args:
@@ -204,8 +210,11 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
         field = field[field.plotID=="SJER_052"]
         
     image_pool = glob.glob("{}/*.tif".format(image_dir))
-    image_paths = []
-    field["image_path"] = field.plotID.apply(lambda plotID: [x for x in image_pool if plotID in x][-1])
+    
+    #Find image locations
+    field["image_path"] = field.plotID.apply(lambda plotID: find_image(plotID,image_pool))
+    field = field[field.image_path.notnull()]
+    
     image_paths =  field.image_path.unique()
     boxes = predict_trees(tree_detector, image_paths)
     boxes.to_csv("{}/trees.csv".format(savedir))
