@@ -20,7 +20,7 @@ from pyproj import CRS
 
 def find_image(plotID, image_pool):
     try:
-        [x for x in image_pool if plotID in x][-1]
+        return [x for x in image_pool if plotID in x][-1]
     except:
         return None
     
@@ -121,8 +121,11 @@ def utm_to_epsg(utm_zone):
     crs = CRS.from_string('+proj=utm +zone={} +north'.format(utm_zone))
     return crs.to_authority()[0] 
     
-def load_field_data(field_path):
+def load_field_data(field_path, debug=False):
     field = pd.read_csv(field_path)
+    if debug:
+        field = field[field.plotID == "SJER_052"]
+        
     field = field[~field.elevation.isnull()]
     field = field[~field.growthForm.isin(["liana","small shrub"])]
     field = field[~field.growthForm.isnull()]
@@ -204,7 +207,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     tree_detector = main.deepforest()
     tree_detector.use_release()
     
-    field = load_field_data(field_path)
+    field = load_field_data(field_path, debug=debug)
     
     if debug:
         field = field[field.plotID=="SJER_052"]
@@ -259,7 +262,8 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     g = sns.countplot(
         data=results,
         x="plantStatus", hue="Dead", palette="dark")
-    plt.savefig("Dead/figures/plantStatus.png")
+    fig = g.get_figure()
+    fig.savefig("Dead/figures/plantStatus.png")
     
     return results
 

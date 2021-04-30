@@ -13,6 +13,6 @@ def test_run(tmpdir):
         savedir=tmpdir,
         field_path="Dead/data/neon_vst_data_2021.csv",
         num_workers=0,
-    debug=False)
+    debug=True)
     results.to_csv("Dead/figures/results.csv")
     
