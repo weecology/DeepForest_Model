@@ -186,7 +186,6 @@ def load_field_data(field_path, debug=False):
 
 def predict_trees(tree_detector, image_paths):
     """Predict alive dead for each crop in the field data"""
-    
     #Predict tree location
     predictions = []
     for image_path in image_paths:
