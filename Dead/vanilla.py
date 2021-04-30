@@ -163,7 +163,6 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         num_workers=num_workers
     )
 
-    
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest-pytorch", workspace="bw4sz")
         

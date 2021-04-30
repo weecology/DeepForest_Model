@@ -226,6 +226,12 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     if canopy_filter:
         lookup_glob = "/orange/ewhite/NeonData/**/CanopyHeightModelGtif/*.tif"
         field = filter_CHM(field, lookup_glob)
+        
+        
+        field = field[(field.height.isnull()) | (field.CHM_height > 1)]
+        
+        #remove CHM points under 4m diff  
+        field = field[(field.height.isnull()) | (abs(field.height - field.CHM_height) < 4)]          
     
     dataset = vanilla.AliveDeadDataset(csv_file = "{}/trees.csv".format(savedir), root_dir=image_dir, label_dict={"Tree":0}, train=False)
     test_loader = torch.utils.data.DataLoader(
