@@ -283,5 +283,5 @@ if __name__ == "__main__":
         savedir="figures/",
         field_path="data/neon_vst_data_2021.csv",
         num_workers=10,
-    debug=False)
+    debug=False,canopy_filter=True)
     results.to_csv("figures/results.csv")
