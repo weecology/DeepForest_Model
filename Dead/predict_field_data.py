@@ -268,7 +268,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
         data=results,
         x="plantStatus", hue="Dead", palette="dark")
     fig = g.get_figure()
-    fig.savefig("Dead/figures/plantStatus.png")
+    fig.savefig("figures/plantStatus.png")
     
     return results
 
@@ -276,9 +276,9 @@ if __name__ == "__main__":
     results = run(
         checkpoint_path="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
         image_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB",
-        savedir="/figures/",
-        field_path="/data/neon_vst_data_2021.csv",
+        savedir="figures/",
+        field_path="data/neon_vst_data_2021.csv",
         num_workers=10,
     debug=True)
-    results.to_csv("/figures/results.csv")
+    results.to_csv("figures/results.csv")
         
