@@ -1,6 +1,6 @@
 #Run mined images
-from Dead import vanilla
-from Dead.vanilla import get_transform, AliveDeadVanilla, AliveDeadDataset
+import vanilla
+from vanilla import get_transform, AliveDeadVanilla, AliveDeadDataset
 import pandas as pd
 from pytorch_lightning.loggers import CometLogger
 import pytorch_lightning as pl
