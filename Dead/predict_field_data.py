@@ -268,7 +268,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
         data=results,
         x="plantStatus", hue="Dead", palette="dark")
     fig = g.get_figure()
-    fig.savefig("Dead/figures/plantStatus.png")
+    fig.savefig("figures/plantStatus.png")
     
     return results
 
@@ -281,4 +281,3 @@ if __name__ == "__main__":
         num_workers=10,
     debug=True)
     results.to_csv("figures/results.csv")
-        
