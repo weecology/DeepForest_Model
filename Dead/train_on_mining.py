@@ -60,7 +60,7 @@ if __name__ == "__main__":
     run(
         checkpoint="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
         annotation_dir="/orange/idtrees-collab/DeepTreeAttention/Dead/annotations/",
-        csv_dir="/orange/idtrees-collab/DeepTreeAttention/Dead/data/",
+        csv_dir="/orange/idtrees-collab/DeepTreeAttention/data/",
         image_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB",
         savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots",
         fast_dev_run=False,

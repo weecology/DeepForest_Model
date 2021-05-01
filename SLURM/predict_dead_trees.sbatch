@@ -18,4 +18,4 @@ source activate Zooniverse_pytorch
 cd /home/b.weinstein/DeepForest_Model/Dead
 
 #comet debug
-python predict_field_data.py
+python -m cProfile -o out.prof predict_field_data.py
