@@ -7,7 +7,7 @@ import numpy as np
 from torchvision.datasets import ImageFolder
 import torch
 
-def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10, fast_dev_run=False, batch_size=100, gpus=1):
+def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10, fast_dev_run=False, batch_size=256, gpus=1):
     m = AliveDeadVanilla.load_from_checkpoint(checkpoint)
     
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
@@ -20,7 +20,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size=100,
+        batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers
     )    
