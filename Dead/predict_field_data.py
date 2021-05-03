@@ -2,30 +2,35 @@ import numpy as np
 import torch
 import os
 import pandas as pd
-import seaborn as sns
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from deepforest.utilities import project_boxes
+import torch.utils.data as data_utils
+import tempfile
+
 
 from Dead.vanilla import AliveDeadDataset
-def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers, debug=False):
+def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers, batch_size=1, debug=False):
     """For a set of tree predictions, categorize alive/dead and score against NEON field points"""
     boxes = pd.read_csv(boxes_csv)
-    field = pd.read_csv(field_path_csv)
+    field = gpd.read_file(field_path_csv)
+    
+    dataset = AliveDeadDataset(csv_file = boxes_csv, root_dir=image_dir, label_dict={"Tree":0}, train=False)
     
     if debug:
         field = field[field.plotID=="SJER_052"]
         boxes = boxes[boxes.image_path=="SJER_052_2018.tif"] 
+        tmp_boxes = "{}/test_box.csv".format(tempfile.gettempdir())
+        boxes.to_csv(tmp_boxes)
+        dataset = AliveDeadDataset(csv_file = tmp_boxes, root_dir=image_dir, label_dict={"Tree":0}, train=False)
         
     if torch.cuda.is_available():
         dead_model = dead_model.to("cuda")
         dead_model.eval()
-        
-    dataset = AliveDeadDataset(csv_file = boxes_csv, root_dir=image_dir, label_dict={"Tree":0}, train=False)
     
     test_loader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=100,
+        batch_size=batch_size,
         shuffle=False,
         num_workers=num_workers
     )     

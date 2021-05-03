@@ -223,7 +223,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
         #remove CHM points under 4m diff  
         field = field[(field.height.isnull()) | (abs(field.height - field.CHM_height) < 4)]
     
-    field.to_csv("{}/filtered_neon_points.csv".format(savedir))
+    field.to_file("{}/filtered_neon_points.shp".format(savedir))
     
 if __name__ == "__main__":
     results = run(
