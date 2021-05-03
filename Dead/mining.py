@@ -1,7 +1,7 @@
 #Self-supervised mining for dead trees
 from rasterio.windows import from_bounds
-from Dead.vanilla import AliveDeadVanilla, get_transform
-import Dead.start_cluster
+from vanilla import AliveDeadVanilla, get_transform
+import start_cluster
 import geopandas as gpd
 import glob
 import cv2

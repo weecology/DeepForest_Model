@@ -1,5 +1,5 @@
 #Compare alive/dead predictions to NEON field data
-from Dead import vanilla
+import vanilla
 import os
 import pandas as pd
 from deepforest import main

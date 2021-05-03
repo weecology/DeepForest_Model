@@ -1,8 +1,8 @@
 ##Vanilla alive dead model
 import pandas as pd
 import comet_ml
-from Dead.vanilla import AliveDeadDataset, AliveDeadVanilla
-from Dead.predict_field_data import predict_neon
+from vanilla import AliveDeadDataset, AliveDeadVanilla
+from predict_field_data import predict_neon
 import numpy as np
 import os
 import pytorch_lightning as pl
