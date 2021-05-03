@@ -7,9 +7,8 @@ import matplotlib.pyplot as plt
 from deepforest.utilities import project_boxes
 import torch.utils.data as data_utils
 import tempfile
+from vanilla import AliveDeadDataset
 
-
-from Dead.vanilla import AliveDeadDataset
 def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers, batch_size=1, debug=False):
     """For a set of tree predictions, categorize alive/dead and score against NEON field points"""
     boxes = pd.read_csv(boxes_csv)
