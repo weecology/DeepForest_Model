@@ -8,6 +8,8 @@ import os
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CometLogger
 import torch
+import torch.utils.data as data_utils
+
 
 def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
@@ -43,6 +45,10 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     
     test_dataset = AliveDeadDataset(csv_file="{}/dead_test.csv".format(csv_dir),
                                     root_dir=root_dir)    
+    
+    #if debugging, limit the size of the dataset
+    if fast_dev_run:
+        test_dataset = data_utils.Subset(test_dataset, range(10))
 
     test_loader = torch.utils.data.DataLoader(
         test_dataset,
@@ -84,9 +90,10 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     comet_logger.experiment.log_metric("Dead Recall", dead_recall)
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
-    trainer.save_checkpoint("{}/{}.pl".format(savedir,comet_logger.experiment.get_key()))
+    #trainer.save_checkpoint("{}/{}.pl".format(savedir,comet_logger.experiment.get_key()))
     
     #Predict NEON points
+    print("Predicting NEON points")
     results = predict_neon(m,
                  boxes_csv="{}/data/trees.csv".format(os.path.dirname(__file__)),
                  field_path_csv="{}/data/filtered_neon_points.csv".format(os.path.dirname(__file__)),
