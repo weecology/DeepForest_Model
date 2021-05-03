@@ -1,19 +1,20 @@
 ##Vanilla alive dead model
 import pandas as pd
 import comet_ml
+import numpy as np
+import matplotlib.pyplot as plt
 import os
 import pytorch_lightning as pl
+from pytorch_lightning.loggers import CometLogger
+from predict_field_data import predict_neon
 from skimage import io
-import numpy as np
+import seaborn as sns
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
-from pytorch_lightning.loggers import CometLogger
 from torchvision import models, transforms
-import matplotlib.pyplot as plt
 import torchmetrics
-
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -124,6 +125,7 @@ class AliveDeadVanilla(pl.LightningModule):
     
 def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
+        savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/",
         alive_weight=None, gpus=1, num_workers=5, batch_size=128, fast_dev_run=False):    
     
     train_dataset = AliveDeadDataset(csv_file="{}/dead_train.csv".format(csv_dir),
@@ -196,8 +198,23 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     comet_logger.experiment.log_metric("Dead Recall", dead_recall)
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
-    trainer.save_checkpoint("/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/{}.pl".format(comet_logger.experiment.get_key()))
+    trainer.save_checkpoint("{}/{}.pl".format(savedir,comet_logger.experiment.get_key()))
     
+    #Predict NEON points
+    results = predict_neon(m,
+                 boxes_csv="data/trees.csv",
+                 field_path_csv="data/filtered_neon_points.csv",
+                 image_dir="",
+                 savedir=savedir,
+                 num_workers=num_workers)
+    
+    results = results.groupby(["plantStatus","Dead"]).apply(lambda x: x.shape[0]).reset_index().rename(columns={0:"count"}).pivot(index="plantStatus",columns="Dead")
+    results["recall"] = results.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
+    comet_logger.experiment.log_asset(file_data=results, file_name="neon_stems.csv")
+    
+    for index, row in results.iterrows():
+        comet_logger.experiment.log_metric(name=index, value=row["recall"])
+
 if __name__ == "__main__":
     run(alive_weight=10)
     

@@ -4,9 +4,9 @@
 #SBATCH --mail-user=benweinstein2010@gmail.com  # Where to send mail
 #SBATCH --account=ewhite
 #SBATCH --nodes=1                 # Number of MPI ranks
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=5
 #SBATCH --mem=20GB
-#SBATCH --time=5:00:00       #Time limit hrs:min:sec
+#SBATCH --time=3:00:00       #Time limit hrs:min:sec
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_Dead%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_Dead%j.err
 #SBATCH --partition=gpu
@@ -18,4 +18,4 @@ source activate Zooniverse_pytorch
 cd /home/b.weinstein/DeepForest_Model/Dead
 
 #comet debug
-python -m cProfile -o out.prof predict_field_data.py
+python prepare_field_data.py
