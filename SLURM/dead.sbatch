@@ -19,4 +19,4 @@ cd /home/b.weinstein/DeepForest_Model/Dead
 
 #comet debug
 #python alive_dead.py
-python vanilla.py
+python train_vanilla.py
