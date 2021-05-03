@@ -8,16 +8,21 @@ import matplotlib.pyplot as plt
 from deepforest.utilities import project_boxes
 
 from Dead.vanilla import AliveDeadDataset
-def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers):
+def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers, debug=False):
     """For a set of tree predictions, categorize alive/dead and score against NEON field points"""
     boxes = pd.read_csv(boxes_csv)
     field = pd.read_csv(field_path_csv)
+    
+    if debug:
+        field = field[field.plotID=="SJER_052"]
+        boxes = boxes[boxes.image_path=="SJER_052_2019.tif"] 
         
     if torch.cuda.is_available():
         dead_model = dead_model.to("cuda")
         dead_model.eval()
         
     dataset = AliveDeadDataset(csv_file = boxes_csv, root_dir=image_dir, label_dict={"Tree":0}, train=False)
+    
     test_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=100,

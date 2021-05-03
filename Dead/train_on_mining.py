@@ -1,6 +1,5 @@
 #Run mined images
-import vanilla
-from vanilla import get_transform, AliveDeadVanilla, AliveDeadDataset
+from Dead.vanilla import get_transform, AliveDeadVanilla, AliveDeadDataset
 import pandas as pd
 from pytorch_lightning.loggers import CometLogger
 import pytorch_lightning as pl
@@ -9,7 +8,7 @@ from torchvision.datasets import ImageFolder
 import torch
 
 def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10, fast_dev_run=False, batch_size=100, gpus=1):
-    m = vanilla.AliveDeadVanilla.load_from_checkpoint(checkpoint)
+    m = AliveDeadVanilla.load_from_checkpoint(checkpoint)
     
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                   project_name="deepforest-pytorch", workspace="bw4sz")
