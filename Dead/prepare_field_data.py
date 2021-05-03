@@ -1,8 +1,7 @@
 #Compare alive/dead predictions to NEON field data
-import vanilla
+from Dead import vanilla
 import os
 import pandas as pd
-import torch
 from deepforest import main
 import numpy as np
 import geopandas as gpd
