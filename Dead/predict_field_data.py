@@ -15,7 +15,7 @@ def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_
     
     if debug:
         field = field[field.plotID=="SJER_052"]
-        boxes = boxes[boxes.image_path=="SJER_052_2019.tif"] 
+        boxes = boxes[boxes.image_path=="SJER_052_2018.tif"] 
         
     if torch.cuda.is_available():
         dead_model = dead_model.to("cuda")
