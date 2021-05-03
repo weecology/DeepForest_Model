@@ -2,6 +2,7 @@
 import pandas as pd
 import comet_ml
 from vanilla import AliveDeadDataset, AliveDeadVanilla
+from vanilla import __file__ as ROOT
 from predict_field_data import predict_neon
 import numpy as np
 import os
@@ -10,6 +11,7 @@ from pytorch_lightning.loggers import CometLogger
 import torch
 import torch.utils.data as data_utils
 
+ROOT = os.path.dirname(ROOT)
 
 def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
@@ -95,8 +97,8 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     #Predict NEON points
     print("Predicting NEON points")
     results = predict_neon(m,
-                 boxes_csv="{}/data/trees.csv".format(os.path.dirname(__file__)),
-                 field_path="{}/data/filtered_neon_points.shp".format(os.path.dirname(__file__)),
+                 boxes_csv="{}/data/trees.csv".format(ROOT),
+                 field_path="{}/data/filtered_neon_points.shp".format(ROOT),
                  image_dir=root_dir,
                  savedir=savedir,
                  num_workers=num_workers,
