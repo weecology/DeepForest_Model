@@ -7,8 +7,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from deepforest.utilities import project_boxes
 
-import vanilla
-
+from Dead.vanilla import AliveDeadDataset
 def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers):
     """For a set of tree predictions, categorize alive/dead and score against NEON field points"""
     boxes = pd.read_csv(boxes_csv)
@@ -18,7 +17,7 @@ def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_
         dead_model = dead_model.to("cuda")
         dead_model.eval()
         
-    dataset = vanilla.AliveDeadDataset(csv_file = boxes_csv, root_dir=image_dir, label_dict={"Tree":0}, train=False)
+    dataset = AliveDeadDataset(csv_file = boxes_csv, root_dir=image_dir, label_dict={"Tree":0}, train=False)
     test_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=100,
