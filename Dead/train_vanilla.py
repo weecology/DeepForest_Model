@@ -96,18 +96,20 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     print("Predicting NEON points")
     results = predict_neon(m,
                  boxes_csv="{}/data/trees.csv".format(os.path.dirname(__file__)),
-                 field_path_csv="{}/data/filtered_neon_points.csv".format(os.path.dirname(__file__)),
+                 field_path="{}/data/filtered_neon_points.shp".format(os.path.dirname(__file__)),
                  image_dir=root_dir,
                  savedir=savedir,
                  num_workers=num_workers,
                  debug=fast_dev_run)
     
-    results = results.groupby(["plantStatus","Dead"]).apply(lambda x: x.shape[0]).reset_index().rename(columns={0:"count"}).pivot(index="plantStatus",columns="Dead")
-    results["recall"] = results.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
+    results = results.groupby(["plantStatu","Dead"]).apply(lambda x: x.shape[0]).reset_index().rename(columns={0:"count"}).pivot(index="plantStatu",columns="Dead")
     comet_logger.experiment.log_asset(file_data=results, file_name="neon_stems.csv")
     
-    for index, row in results.iterrows():
-        comet_logger.experiment.log_metric(name=index, value=row["recall"])
+    if results.shape[0] > 1: 
+        results["recall"] = results.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
+        for index, row in results.iterrows():
+            comet_logger.experiment.log_metric(name=index, value=row["recall"])
+    
 
 if __name__ == "__main__":
     run(alive_weight=10)

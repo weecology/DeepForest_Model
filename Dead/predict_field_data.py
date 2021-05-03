@@ -5,14 +5,13 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from deepforest.utilities import project_boxes
-import torch.utils.data as data_utils
 import tempfile
 from vanilla import AliveDeadDataset
 
-def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_workers, batch_size=1, debug=False):
+def predict_neon(dead_model, boxes_csv, field_path, image_dir, savedir, num_workers, batch_size=1, debug=False):
     """For a set of tree predictions, categorize alive/dead and score against NEON field points"""
     boxes = pd.read_csv(boxes_csv)
-    field = gpd.read_file(field_path_csv)
+    field = gpd.read_file(field_path)
     
     dataset = AliveDeadDataset(csv_file = boxes_csv, root_dir=image_dir, label_dict={"Tree":0}, train=False)
     
@@ -48,7 +47,7 @@ def predict_neon(dead_model, boxes_csv, field_path_csv, image_dir, savedir, num_
     for name, group in field.groupby("image_path"):
         field_plot = gpd.GeoDataFrame(group, geometry="geometry")
         field_plot.set_crs = group["epsg"]
-        field_plot = field_plot[["utmZone","individualID","taxonID","siteID","plotID","plantStatus","geometry"]]
+        field_plot = field_plot[["utmZone","individual","taxonID","siteID","plotID","plantStatu","geometry"]]
         trees = boxes[boxes.image_path == os.path.basename(name)]    
         try:
             trees = project_boxes(trees, root_dir=image_dir)
