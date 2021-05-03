@@ -21,7 +21,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=100,
-        shuffle=False,
+        shuffle=True,
         num_workers=num_workers
     )    
     

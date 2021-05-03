@@ -198,7 +198,7 @@ def run(checkpoint_path, image_dir, savedir, field_path, num_workers=10, canopy_
     tree_detector = main.deepforest()
     tree_detector.use_release()
     
-    print("tree detector device is {}".format(tree_detector.device))
+    print("tree detector device is {}".format(tree_detector.current_device))
     field = load_field_data(field_path, debug=debug)
     if debug:
         field = field[field.plotID=="SJER_052"]
@@ -229,6 +229,6 @@ if __name__ == "__main__":
     results = run(
         checkpoint_path="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
         image_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB",
-        savedir="figures/",
+        savedir="data/",
         field_path="data/neon_vst_data_2021.csv",
     debug=False,canopy_filter=True)
