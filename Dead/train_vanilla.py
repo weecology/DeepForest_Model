@@ -92,7 +92,7 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     comet_logger.experiment.log_metric("Dead Recall", dead_recall)
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
-    #trainer.save_checkpoint("{}/{}.pl".format(savedir,comet_logger.experiment.get_key()))
+    trainer.save_checkpoint("{}/{}.pl".format(savedir,comet_logger.experiment.get_key()))
     
     #Predict NEON points
     print("Predicting NEON points")
