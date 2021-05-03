@@ -14,7 +14,7 @@ import torch.utils.data as data_utils
 def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
         savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/",
-        alive_weight=None, gpus=1, num_workers=5, batch_size=128, fast_dev_run=False):    
+        alive_weight=None, gpus=1, num_workers=10, batch_size=256, fast_dev_run=False):    
     
     train_dataset = AliveDeadDataset(csv_file="{}/dead_train.csv".format(csv_dir),
                                     root_dir=root_dir)
