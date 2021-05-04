@@ -77,7 +77,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     
     #Predict NEON points
     print("Predicting NEON points")
-    results = predict_neon(m,
+    results, box_dataset = predict_neon(m,
                  boxes_csv="{}/data/trees.csv".format(ROOT),
                  field_path="{}/data/filtered_neon_points.shp".format(ROOT),
                  image_dir=image_dir,
@@ -93,7 +93,11 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
         results["recall"] = results.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
         for index, row in results.iterrows():
             comet_logger.experiment.log_metric(name=index, value=row["recall"])
-            
+    
+    #Plot standing dead errors
+    box_dataset[results.index]
+    
+    
     
 if __name__ == "__main__":
     run(
