@@ -102,8 +102,20 @@ class AliveDeadVanilla(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         
-        return optimizer
-    
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
+                                                                    mode='min',
+                                                                    factor=0.1,
+                                                                    patience=5,
+                                                                    verbose=True,
+                                                                    threshold=0.0001,
+                                                                    threshold_mode='rel',
+                                                                    cooldown=0,
+                                                                    min_lr=0,
+                                                                    eps=1e-08)
+        
+        #Monitor rate is val data is used
+        return {'optimizer':optimizer, 'lr_scheduler': scheduler,"monitor":'val_loss'}
+            
     def dataset_confusion(self, loader):
         """Create a confusion matrix from a data loader"""
         true_class = []
