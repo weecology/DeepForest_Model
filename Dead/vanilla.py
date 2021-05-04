@@ -129,6 +129,7 @@ class AliveDeadVanilla(pl.LightningModule):
         """Create a confusion matrix from a data loader"""
         true_class = []
         predicted_class = []
+        self.eval()
         for batch in loader:
             x,y = batch
             true_class.append(F.one_hot(y,num_classes=2).detach().numpy())
