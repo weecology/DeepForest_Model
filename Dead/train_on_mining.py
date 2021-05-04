@@ -95,8 +95,12 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
             comet_logger.experiment.log_metric(name=index, value=row["recall"])
     
     #Plot standing dead errors
-    box_dataset[results.index]
-    
+    for index in results.index:
+        image_array = box_dataset[index].numpy()
+        image_array = np.rollaxis(image_array, 0,3) 
+        comet_logger.experiment.log_image(
+            image_data=image_array,
+            name="{}_{}:{}".format(results.loc[index].plotID,results.loc[index].plantStatu,results.loc[index].Dead))    
     
     
 if __name__ == "__main__":
