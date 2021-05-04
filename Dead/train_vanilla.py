@@ -17,7 +17,7 @@ ROOT = os.path.dirname(ROOT)
 def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
         savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/",
-        alive_weight=None, gpus=1, num_workers=10, batch_size=256, fast_dev_run=False):    
+        alive_weight=None, gpus=1, num_workers=10, batch_size=32, fast_dev_run=False):    
     
     train_dataset = AliveDeadDataset(csv_file="{}/dead_train.csv".format(csv_dir),
                                     root_dir=root_dir)
@@ -75,7 +75,7 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         comet_logger.experiment.log_image(image, name ="Before Training {} {}".format(label, counter),)
         counter+=1
 
-    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=40, fast_dev_run=fast_dev_run, checkpoint_callback=False)
+    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=60, fast_dev_run=fast_dev_run, checkpoint_callback=False)
     
     m = AliveDeadVanilla()
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
