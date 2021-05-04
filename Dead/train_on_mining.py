@@ -85,12 +85,12 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
                  num_workers=num_workers,
                  debug=fast_dev_run)
     
-    results = results.groupby(["plantStatu","Dead"]).apply(lambda x: x.shape[0]).reset_index().rename(columns={0:"count"}).pivot(index="plantStatu",columns="Dead")
-    results.to_csv("{}/results.csv".format(tempfile.gettempdir()))
+    result_matrix = results.groupby(["plantStatu","Dead"]).apply(lambda x: x.shape[0]).reset_index().rename(columns={0:"count"}).pivot(index="plantStatu",columns="Dead")
+    result_matrix.to_csv("{}/results.csv".format(tempfile.gettempdir()))
     comet_logger.experiment.log_asset(file_data="{}/results.csv".format(tempfile.gettempdir()), file_name="neon_stems.csv")
     
-    if results.shape[0] > 1: 
-        results["recall"] = results.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
+    if result_matrix.shape[0] > 1: 
+        result_matrix["recall"] = result_matrix.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
         for index, row in results.iterrows():
             comet_logger.experiment.log_metric(name=index, value=row["recall"])
     
@@ -101,7 +101,6 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
         comet_logger.experiment.log_image(
             image_data=image_array,
             name="{}_{}:{}".format(results.loc[index].plotID,results.loc[index].plantStatu,results.loc[index].Dead))    
-    
     
 if __name__ == "__main__":
     run(
