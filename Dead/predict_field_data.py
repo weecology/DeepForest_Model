@@ -9,7 +9,11 @@ import tempfile
 from vanilla import AliveDeadDataset
 
 def predict_neon(dead_model, boxes_csv, field_path, image_dir, savedir, num_workers, batch_size=1, debug=False):
-    """For a set of tree predictions, categorize alive/dead and score against NEON field points"""
+    """For a set of tree predictions, categorize alive/dead and score against NEON field points
+       Returns:
+           results: pandas dataframe with matched Dead/Alive predictions
+           dataset: the pytorch dataset to get the correct index for plotting
+    """
     boxes = pd.read_csv(boxes_csv)
     field = gpd.read_file(field_path)
     
@@ -17,7 +21,7 @@ def predict_neon(dead_model, boxes_csv, field_path, image_dir, savedir, num_work
     
     if debug:
         field = field[field.plotID=="SJER_052"]
-        boxes = boxes[boxes.image_path=="SJER_052_2018.tif"] 
+        boxes = boxes[boxes.image_path=="SJER_052_2018.tif"].reset_index(drop=True) 
         tmp_boxes = "{}/test_box.csv".format(tempfile.gettempdir())
         boxes.to_csv(tmp_boxes)
         dataset = AliveDeadDataset(csv_file = tmp_boxes, root_dir=image_dir, label_dict={"Tree":0}, train=False)
@@ -60,4 +64,4 @@ def predict_neon(dead_model, boxes_csv, field_path, image_dir, savedir, num_work
     
     results = pd.concat(results)
         
-    return results
+    return results, dataset
