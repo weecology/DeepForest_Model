@@ -54,7 +54,7 @@ def predict_neon(dead_model, boxes_csv, field_path, image_dir, savedir, num_work
         field_plot = field_plot[["utmZone","individual","taxonID","siteID","plotID","plantStatu","geometry"]]
         trees = boxes[boxes.image_path == os.path.basename(name)]    
         try:
-            trees = project_boxes(trees, root_dir=image_dir)
+            trees = project_boxes(trees.copy(), root_dir=image_dir)
         except Exception as e:
             print("{} raised {}".format(name,e))
             continue
