@@ -73,8 +73,10 @@ class AliveDeadVanilla(pl.LightningModule):
         self.model = models.resnet18()
         num_ftrs = self.model.fc.in_features
         self.model.fc = nn.Linear(num_ftrs, 2)        
-        self.accuracy = torchmetrics.Accuracy(multiclass=True)        
-
+        self.accuracy = torchmetrics.Accuracy(average='none', num_classes=2)      
+        self.total_accuracy = torchmetrics.Accuracy()        
+        self.precision_metric = torchmetrics.Precision()
+        
     def forward(self, x):
         output = self.model(x)
         pred = F.softmax(output)
@@ -94,18 +96,25 @@ class AliveDeadVanilla(pl.LightningModule):
         outputs = self(x)
         loss = F.cross_entropy(outputs,y)
         self.log("val_loss",loss)        
+        
         self.accuracy(outputs, y)
+        self.total_accuracy(outputs, y)
+        self.precision_metric(outputs, y)
  
     def validation_epoch_end(self, outputs):
-        self.log('val_acc', self.accuracy.compute())
+        alive_accuracy, dead_accuracy = self.accuracy.compute()
+        self.log('alive_accuracy',alive_accuracy)
+        self.log('dead_accuracy',dead_accuracy)
+        self.log('val_precision', self.precision_metric.compute())
+        self.log('val_acc',self.total_accuracy.compute())
         
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
         
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                                     mode='min',
-                                                                    factor=0.1,
-                                                                    patience=5,
+                                                                    factor=0.5,
+                                                                    patience=10,
                                                                     verbose=True,
                                                                     threshold=0.0001,
                                                                     threshold_mode='rel',
