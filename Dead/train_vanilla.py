@@ -14,6 +14,16 @@ import tempfile
 
 ROOT = os.path.dirname(ROOT)
 
+def index_to_example(index, test_dataset, experiment):
+    image_array = test_dataset[index][0].numpy()
+    image_array = np.rollaxis(image_array, 0,3)
+    image_name = "confusion-matrix-%05d.png" % index
+    results = experiment.log_image(
+        image_array, name=image_name,
+    )
+    # Return sample, assetId (index is added automatically)
+    return {"sample": image_name, "assetId": results["imageId"]}
+
 def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
         root_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB/",
         savedir="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/",
@@ -81,7 +91,13 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
     
     true_class, predicted_class = m.dataset_confusion(test_loader)
-    comet_logger.experiment.log_confusion_matrix(true_class, predicted_class,labels=["Alive","Dead"])
+    
+    comet_logger.experiment.log_confusion_matrix(
+        true_class,
+        predicted_class,
+        labels=["Alive","Dead"], index_to_example_function=index_to_example, test_dataset=test_dataset,
+        experiment=comet_logger.experiment)    
+    
     
     df = pd.DataFrame({"true_class":np.argmax(true_class,1),"predicted_class":np.argmax(predicted_class,1)})
     true_dead = df[df.true_class == 1]
