@@ -97,7 +97,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     
 if __name__ == "__main__":
     run(
-        checkpoint="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/d3faa174c8404ba8a50186873fcaa200.pl",
+        checkpoint="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/865ac9b23eae45cca33e6a44346c2100.pl",
         annotation_dir="/orange/idtrees-collab/DeepTreeAttention/Dead/annotations/",
         csv_dir="/orange/idtrees-collab/DeepTreeAttention/data/",
         image_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB",
