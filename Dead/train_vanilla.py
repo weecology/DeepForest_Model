@@ -127,7 +127,7 @@ def run(csv_dir = "/orange/idtrees-collab/DeepTreeAttention/data/",
     
     if result_matrix.shape[0] > 1: 
         result_matrix["recall"] = result_matrix.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
-        for index, row in results.iterrows():
+        for index, row in result_matrix.iterrows():
             comet_logger.experiment.log_metric(name=index, value=row["recall"])
     
     #plot the missing standing dead trees

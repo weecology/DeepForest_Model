@@ -91,7 +91,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     
     if result_matrix.shape[0] > 1: 
         result_matrix["recall"] = result_matrix.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
-        for index, row in results.iterrows():
+        for index, row in result_matrix.iterrows():
             comet_logger.experiment.log_metric(name=index, value=row["recall"])
     
     #Plot standing dead errors
