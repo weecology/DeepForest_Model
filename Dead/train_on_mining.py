@@ -1,11 +1,27 @@
 #Run mined images
 from vanilla import get_transform, AliveDeadVanilla, AliveDeadDataset
+import os
 import pandas as pd
 from pytorch_lightning.loggers import CometLogger
 import pytorch_lightning as pl
+from predict_field_data import predict_neon
 import numpy as np
 from torchvision.datasets import ImageFolder
 import torch
+import tempfile
+
+from vanilla import __file__ as ROOT
+ROOT = os.path.dirname(ROOT)
+
+def index_to_example(index, test_dataset, experiment):
+    image_array = test_dataset[index][0].numpy()
+    image_array = np.rollaxis(image_array, 0,3)
+    image_name = "confusion-matrix-%05d.png" % index
+    results = experiment.log_image(
+        image_array, name=image_name,
+    )
+    # Return sample, assetId (index is added automatically)
+    return {"sample": image_name, "assetId": results["imageId"]}
 
 def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10, fast_dev_run=False, batch_size=256, gpus=1):
     m = AliveDeadVanilla.load_from_checkpoint(checkpoint)
@@ -35,12 +51,17 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
         num_workers=num_workers
     )
     
-    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=40, fast_dev_run=fast_dev_run)
+    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=40, fast_dev_run=fast_dev_run, checkpoint_callback=False)
     
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
     
     true_class, predicted_class = m.dataset_confusion(test_loader)
-    comet_logger.experiment.log_confusion_matrix(true_class, predicted_class,labels=["Alive","Dead"])    
+    
+    comet_logger.experiment.log_confusion_matrix(
+        true_class,
+        predicted_class,
+        labels=["Alive","Dead"], index_to_example_function=index_to_example, test_dataset=test_dataset,
+        experiment=comet_logger.experiment)    
     
     df = pd.DataFrame({"true_class":np.argmax(true_class,1),"predicted_class":np.argmax(predicted_class,1)})
     true_dead = df[df.true_class == 1]
@@ -53,6 +74,26 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
     trainer.save_checkpoint("Dead/{}.pl".format(comet_logger.experiment.get_key()))    
+    
+    #Predict NEON points
+    print("Predicting NEON points")
+    results = predict_neon(m,
+                 boxes_csv="{}/data/trees.csv".format(ROOT),
+                 field_path="{}/data/filtered_neon_points.shp".format(ROOT),
+                 image_dir=image_dir,
+                 savedir=savedir,
+                 num_workers=num_workers,
+                 debug=fast_dev_run)
+    
+    results = results.groupby(["plantStatu","Dead"]).apply(lambda x: x.shape[0]).reset_index().rename(columns={0:"count"}).pivot(index="plantStatu",columns="Dead")
+    results.to_csv("{}/results.csv".format(tempfile.gettempdir()))
+    comet_logger.experiment.log_asset(file_data="{}/results.csv".format(tempfile.gettempdir()), file_name="neon_stems.csv")
+    
+    if results.shape[0] > 1: 
+        results["recall"] = results.apply(lambda x: np.round(x[1]/(x[0]+x[1]) * 100,3), axis=1).fillna(0)
+        for index, row in results.iterrows():
+            comet_logger.experiment.log_metric(name=index, value=row["recall"])
+            
     
 if __name__ == "__main__":
     run(
