@@ -110,8 +110,8 @@ def run(checkpoint_path, image_glob, shape_dir, savedir, num_workers=5):
     tree_detector = main.deepforest()
     tree_detector.use_release()
     
-    image_pool = glob(image_glob)
-    if len(image_glob) == 0:
+    image_pool = glob(image_glob, recursive=True)
+    if len(image_pool) == 0:
         raise IOError("No images found in image_glob {}".format(image_glob))
     
     for shp in shps:
