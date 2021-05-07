@@ -105,6 +105,11 @@ def create_tiles(shp, image_pool, savedir):
     
 def run(checkpoint_path, image_glob, shape_dir, savedir, num_workers=5):
     dead_model = AliveDeadVanilla.load_from_checkpoint(checkpoint_path)
+    
+    if torch.cuda.is_available():
+        dead_model = dead_model.to("cuda")
+        dead_model.eval()
+        
     shps= glob("{}/*.shp".format(shape_dir))
     
     tree_detector = main.deepforest()
