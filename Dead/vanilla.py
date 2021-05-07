@@ -26,7 +26,7 @@ def get_transform(augment):
 
 class AliveDeadDataset(Dataset):
 
-    def __init__(self, csv_file, root_dir, label_dict = {"Alive": 0,"Dead":1}, augment=False, train=True):
+    def __init__(self, csv_file, root_dir, label_dict = {"Alive": 0,"Dead":1}, transform=True, augment=False, train=True):
         """
         Args:
             csv_file (string): Path to a single csv file with annotations.
@@ -37,7 +37,12 @@ class AliveDeadDataset(Dataset):
         self.root_dir = root_dir
         self.image_names = self.annotations.image_path.unique()
         self.label_dict = label_dict
-        self.transform = get_transform(augment=augment)
+        
+        if transform is True:
+            self.transform = get_transform(augment=augment)
+        else:
+            self.transform = None
+            
         self.train = train
 
     def __len__(self):
@@ -57,7 +62,9 @@ class AliveDeadDataset(Dataset):
         ymax = np.min([image.shape[0],ymax+20])
         
         box = image[ymin:ymax, xmin:xmax]
-        box = self.transform(box)
+        
+        if self.transform is not None:
+            box = self.transform(box)
         
         # Labels need to be encoded if supplied
         if self.train:
