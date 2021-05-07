@@ -81,6 +81,9 @@ def create_tiles(shp, image_pool, savedir):
     #pad geoindex by 1 in each direction to get all surrounding tiles
     tiles = [x for x in image_pool if geo_index in x]  
     
+    if len(tiles) == 0:
+        raise IOError("No tiles found for geoindex {}".format(geo_index))
+    
     tile_paths = []
     with fiona.open(shp, "r") as shapefile:
         shapes = [feature["geometry"] for feature in shapefile]
@@ -108,6 +111,8 @@ def run(checkpoint_path, image_glob, shape_dir, savedir, num_workers=5):
     tree_detector.use_release()
     
     image_pool = glob(image_glob)
+    if len(image_glob) == 0:
+        raise IOError("No images found in image_glob {}".format(image_glob))
     
     for shp in shps:
         tile_paths = create_tiles(shp, image_pool, savedir)
