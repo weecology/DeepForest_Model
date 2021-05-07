@@ -73,7 +73,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     comet_logger.experiment.log_metric("Dead Recall", dead_recall)
     comet_logger.experiment.log_metric("Dead Precision", dead_precision)    
     
-    trainer.save_checkpoint("Dead/{}.pl".format(comet_logger.experiment.get_key()))    
+    trainer.save_checkpoint("{}/{}.pl".format(savedir, comet_logger.experiment.get_key()))    
     
     #Predict NEON points
     print("Predicting NEON points")
