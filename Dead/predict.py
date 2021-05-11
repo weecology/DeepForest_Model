@@ -14,15 +14,13 @@ from rasterio.mask import mask
 import pandas as pd
 from vanilla import AliveDeadDataset, AliveDeadVanilla
 
-def bounds_to_geoindex(bounds):
+def bounds_to_geoindex(easting, northing):
     """Convert an extent into NEONs naming schema
     Args:
         bounds: list of top, left, bottom, right bounds, usually from geopandas.total_bounds
     Return:
         geoindex: str {easting}_{northing}
     """
-    easting = min(bounds[0], bounds[2])
-    northing = min(bounds[1], bounds[3])
 
     easting = math.floor(easting / 1000) * 1000
     northing = math.floor(northing / 1000) * 1000
@@ -75,11 +73,16 @@ def create_tiles(shp, image_pool, savedir):
         tile_paths: list of cropped tile paths of RGB data
     """
     df = gpd.read_file(shp)
-    bounds = df.total_bounds
-    geo_index = bounds_to_geoindex(bounds)
+    left, bottom, top, right = df.total_bounds
+    
+    #look at both top left and bottom right 
+    geo_index_min = bounds_to_geoindex(easting=left, northing=bottom)
+    geo_index_max = bounds_to_geoindex(easting=top, northing=right)
+    
+    geo_index = list(np.unique([geo_index_min, geo_index_max]))
     
     #pad geoindex by 1 in each direction to get all surrounding tiles
-    tiles = [x for x in image_pool if geo_index in x]  
+    tiles = [x for x in image_pool if any(y in x for y in geo_index)]  
     
     if len(tiles) == 0:
         raise IOError("No tiles found for geoindex {}".format(geo_index))
