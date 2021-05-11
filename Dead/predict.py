@@ -131,7 +131,7 @@ def run(checkpoint_path, image_glob, shape_dir, savedir, num_workers=5):
 
 if __name__ == "__main__":
     run(
-        checkpoint_path = "/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/865ac9b23eae45cca33e6a44346c2100.pl",
+        checkpoint_path = "/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/5b8b3695c6d84eccb18dffacc2831abd.pl",
         image_glob="/orange/ewhite/NeonData/**/Camera/**/*.tif",
         shape_dir="/orange/ewhite/b.weinstein/DeadTrees/site_shps/",
         savedir="/orange/ewhite/b.weinstein/DeadTrees/predictions")
