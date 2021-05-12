@@ -51,7 +51,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
         num_workers=num_workers
     )
     
-    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=40, fast_dev_run=fast_dev_run, checkpoint_callback=False)
+    trainer = pl.Trainer(logger=comet_logger, gpus=gpus, max_epochs=60, fast_dev_run=fast_dev_run, checkpoint_callback=False)
     
     trainer.fit(m,train_dataloader=train_loader, val_dataloaders=test_loader)
     
@@ -104,7 +104,7 @@ def run(checkpoint, annotation_dir, image_dir, csv_dir, savedir, num_workers=10,
     
 if __name__ == "__main__":
     run(
-        checkpoint="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
+        checkpoint="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/865ac9b23eae45cca33e6a44346c2100.pl",
         annotation_dir="/orange/idtrees-collab/DeepTreeAttention/Dead/annotations/",
         csv_dir="/orange/idtrees-collab/DeepTreeAttention/data/",
         image_dir="/orange/idtrees-collab/NeonTreeEvaluation/evaluation/RGB",
