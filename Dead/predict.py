@@ -126,14 +126,16 @@ def run(checkpoint_path, image_glob, shape_dir, savedir, num_workers=5):
     
     for shp in shps:
         tile_paths = create_tiles(shp, image_pool, savedir)
-        for tile_path in tile_paths:    
-            trees_csv = predict_trees(tree_detector, tile_path)
-            dead_trees = predict_dead(dead_model, trees_csv, root_dir=os.path.dirname(tile_path), num_workers=num_workers)
-            projected_trees = project_boxes(df=dead_trees, root_dir=os.path.dirname(tile_path))
+        for tile_path in tile_paths:   
             basename = os.path.basename(os.path.splitext(tile_path)[0])
-            projected_trees.to_file("{}/{}.shp".format(savedir, basename))
-    
-
+            if not os.path.exists("{}/{}.shp".format(savedir, basename)):
+                trees_csv = predict_trees(tree_detector, tile_path)
+                dead_trees = predict_dead(dead_model, trees_csv, root_dir=os.path.dirname(tile_path), num_workers=num_workers)
+                projected_trees = project_boxes(df=dead_trees, root_dir=os.path.dirname(tile_path))
+                projected_trees.to_file("{}/{}.shp".format(savedir, basename))
+            else:
+                print("{}/{}.shp already exists".format(savedir, basename))
+                
 if __name__ == "__main__":
     run(
         checkpoint_path = "/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/5b8b3695c6d84eccb18dffacc2831abd.pl",
