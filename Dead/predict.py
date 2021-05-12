@@ -76,8 +76,10 @@ def create_tiles(shp, image_pool, savedir):
     left, bottom, top, right = df.total_bounds
     
     #look at both top left and bottom right 
-    geo_index_min = bounds_to_geoindex(easting=left, northing=bottom)
-    geo_index_max = bounds_to_geoindex(easting=top, northing=right)
+    geo_index_min = bounds_to_geoindex(easting=left, northing=top)
+    geo_index_max = bounds_to_geoindex(easting=right, northing=bottom)
+    geo_index_max = bounds_to_geoindex(easting=right, northing=top)
+    geo_index_max = bounds_to_geoindex(easting=left, northing=bottom)
     
     geo_index = list(np.unique([geo_index_min, geo_index_max]))
     
