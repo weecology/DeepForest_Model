@@ -75,13 +75,13 @@ def create_tiles(shp, image_pool, savedir):
     df = gpd.read_file(shp)
     left, bottom, right, top = df.total_bounds
     
-    #look at both top left and bottom right 
-    geo_index_1 = bounds_to_geoindex(easting=left, northing=top)
-    geo_index_2 = bounds_to_geoindex(easting=right, northing=bottom)
-    geo_index_3 = bounds_to_geoindex(easting=right, northing=top)
-    geo_index_4 = bounds_to_geoindex(easting=left, northing=bottom)
-    
-    geo_index = list(np.unique([geo_index_1, geo_index_2,geo_index_3,geo_index_4]))
+    #look along each axis for tiles at 500m interval
+    geo_indices = []
+    for x in np.arange(left, right, 500):
+        for y in np.arange(bottom, top, 500):
+            geo_indices.append(bounds_to_geoindex(easting=x, northing=y))
+            
+    geo_index = list(np.unique(geo_indices))
     
     #pad geoindex by 1 in each direction to get all surrounding tiles
     tiles = [x for x in image_pool if any(y in x for y in geo_index)]  
