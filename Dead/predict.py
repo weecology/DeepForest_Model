@@ -73,7 +73,7 @@ def create_tiles(shp, image_pool, savedir):
         tile_paths: list of cropped tile paths of RGB data
     """
     df = gpd.read_file(shp)
-    left, bottom, top, right = df.total_bounds
+    left, bottom, right, top = df.total_bounds
     
     #look at both top left and bottom right 
     geo_index_1 = bounds_to_geoindex(easting=left, northing=top)
