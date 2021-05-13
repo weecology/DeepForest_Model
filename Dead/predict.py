@@ -1,7 +1,6 @@
 #Predict tile
 from deepforest import main
 from deepforest.utilities import project_boxes
-from deepforest import get_data
 from glob import glob
 import geopandas as gpd
 import numpy as np
@@ -118,7 +117,8 @@ def run(checkpoint_path, image_glob, shape_dir, savedir, num_workers=5):
         
     shps= glob("{}/*.shp".format(shape_dir))
     
-    tree_detector = main.deepforest.load_from_checkpoint(get_data("NEON.h5"))
+    tree_detector = main.deepforest()
+    tree_detector.use_release()
     
     image_pool = glob(image_glob, recursive=True)
     if len(image_pool) == 0:
