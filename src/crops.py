@@ -124,7 +124,6 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
     xmls = glob.glob(BENCHMARK_PATH + "annotations/" + "*.xml")
     annotation_list = []
     for xml in xmls:
-        print(xml)
         #check if it is in the directory
         image_name = "{}.tif".format(os.path.splitext(os.path.basename(xml))[0])
         if os.path.exists(os.path.join(BASE_PATH + dirname + image_name)):
