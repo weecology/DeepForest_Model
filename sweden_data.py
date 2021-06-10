@@ -68,7 +68,11 @@ def prepare_data(paths):
     """Loop through the xml data, create a train/test split csv files and create"""    
     results = []
     for x in paths:
-        df = xml_to_annotations(x)
+        try:
+            df = xml_to_annotations(x)
+        except Exception as e:
+            print("{} failed with {}".format(x, e))
+        
         results.append(df)
     
     results = pd.concat(results)
