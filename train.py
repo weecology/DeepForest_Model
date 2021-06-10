@@ -8,6 +8,7 @@ from datetime import datetime
 import os
 import time
 import random
+import glob
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="deepforest-pytorch", workspace="bw4sz")
@@ -37,7 +38,7 @@ comet_logger.experiment.log_parameters(m.config["validation"])
 
 m.trainer.fit(m)
 
-result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"])
+result_dict = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir)
 comet_logger.experiment.log_metric("test_box_precision",result_dict["box_precision"])
 comet_logger.experiment.log_metric("test_box_recall",result_dict["box_recall"])
 
@@ -54,4 +55,7 @@ comet_logger.experiment.log_asset("{}/benchmark_predictions.csv".format(savedir)
 m.save_model("{}/hand_annotated.pl".format(savedir))
 comet_logger.experiment.log_parameter("saved model", "{}/hand_annotated.pl".format(savedir))
 
+images = glob.glob("{}/*.png".format(savedir))
+for img in images:
+    comet_logger.experiment.log_image(img, image_scale=0.25) 
              
