@@ -4,12 +4,13 @@ import glob
 import os
 import pandas as pd
 
-def xml_to_annotations(xml_path):
+def xml_to_annotations(xml_path, image_dir):
     """
     Load annotations from xml format (e.g. RectLabel editor) and convert
     them into retinanet annotations format.
     Args:
         xml_path (str): Path to the annotations xml, formatted by RectLabel
+        image_dir: Directory to search for images
     Returns:
         Annotations (pandas dataframe): in the
             format -> path-to-image.png,x1,y1,x2,y2,class_name
@@ -47,22 +48,25 @@ def xml_to_annotations(xml_path):
         label.append(tile_xml['tree'])
 
     rgb_name = os.path.basename(doc["annotation"]["filename"])
-
-    # set dtypes, check for floats and round
-    xmin = [int(np.round(float(x))) for x in xmin]
-    xmax = [int(np.round(float(x)))for x in xmax]
-    ymin = [int(np.round(float(x))) for x in ymin]
-    ymax = [int(np.round(float(x))) for x in ymax]
-
-    annotations = pd.DataFrame({
-        "image_path": rgb_name,
-        "xmin": xmin,
-        "ymin": ymin,
-        "xmax": xmax,
-        "ymax": ymax,
-        "label": label
-    })
-    return (annotations)
+    
+    if os.path.exists("{}/{}".format(image_dir,rgb_name)):
+        # set dtypes, check for floats and round
+        xmin = [int(np.round(float(x))) for x in xmin]
+        xmax = [int(np.round(float(x)))for x in xmax]
+        ymin = [int(np.round(float(x))) for x in ymin]
+        ymax = [int(np.round(float(x))) for x in ymax]
+    
+        annotations = pd.DataFrame({
+            "image_path": rgb_name,
+            "xmin": xmin,
+            "ymin": ymin,
+            "xmax": xmax,
+            "ymax": ymax,
+            "label": label
+        })
+        return (annotations)
+    else:
+        return None
 
 def prepare_data(paths):
     """Loop through the xml data, create a train/test split csv files and create"""    
@@ -83,7 +87,7 @@ def prepare_data(paths):
     
 if __name__ == "__main__":
     paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
-    results = prepare_data(paths)
+    results = prepare_data(paths, "/orange/ewhite/b.weinstein/Radogoshi_Sweden/images")
     results["label"] = "Tree"
     train_images = np.random.choice(results.image_path.unique(),int(len(results.image_path.unique()) * 0.9))
     train_annotations = results[results.image_path.isin(train_images)]
