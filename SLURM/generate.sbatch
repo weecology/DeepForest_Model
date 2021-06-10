@@ -9,7 +9,7 @@
 #SBATCH --output=/home/b.weinstein/logs/generate.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/generate.err
 
-source activate deepforest_pytorch
+source activate Zooniverse_pytorch
 cd /home/b.weinstein/DeepForest_Model/
 
 python generate.py

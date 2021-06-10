@@ -72,7 +72,7 @@ def prepare_data(paths):
             df = xml_to_annotations(x)
         except Exception as e:
             print("{} failed with {}".format(x, e))
-        
+        print(x)
         results.append(df)
     
     results = pd.concat(results)
