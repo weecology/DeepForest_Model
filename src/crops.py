@@ -171,7 +171,7 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
             annotations = preprocess.split_raster(
             
             annotations_file=BASE_PATH + dirname + "hand_annotations.csv",                                  
-            x,
+            path_to_raster=x,
             base_dir=BASE_PATH + dirname + "crops/",
             patch_size=400,
             patch_overlap=0.05,
