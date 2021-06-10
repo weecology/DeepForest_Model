@@ -87,7 +87,7 @@ def prepare_data(paths):
     
 if __name__ == "__main__":
     paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
-    results = prepare_data(paths, "/orange/ewhite/b.weinstein/Radogoshi_Sweden/images")
+    results = prepare_data(paths,image_dir="/orange/ewhite/b.weinstein/Radogoshi_Sweden/images")
     results["label"] = "Tree"
     train_images = np.random.choice(results.image_path.unique(),int(len(results.image_path.unique()) * 0.9))
     train_annotations = results[results.image_path.isin(train_images)]
