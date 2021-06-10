@@ -66,14 +66,14 @@ def xml_to_annotations(xml_path, image_dir):
         })
         return (annotations)
     else:
-        return None
+        raise IOError("{} doesn't exist".format(rgb_name))
 
 def prepare_data(paths):
     """Loop through the xml data, create a train/test split csv files and create"""    
     results = []
     for x in paths:
         try:
-            df = xml_to_annotations(x)
+            df = xml_to_annotations(x, image_dir="/orange/ewhite/b.weinstein/Radogoshi_Sweden/images")
         except Exception as e:
             print("{} failed with {}".format(x, e))
         
@@ -87,7 +87,7 @@ def prepare_data(paths):
     
 if __name__ == "__main__":
     paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
-    results = prepare_data(paths,image_dir="/orange/ewhite/b.weinstein/Radogoshi_Sweden/images")
+    results = prepare_data(paths)
     results["label"] = "Tree"
     train_images = np.random.choice(results.image_path.unique(),int(len(results.image_path.unique()) * 0.9))
     train_annotations = results[results.image_path.isin(train_images)]
