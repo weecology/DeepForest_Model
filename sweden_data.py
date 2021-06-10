@@ -76,6 +76,6 @@ def prepare_data(paths):
     
     
 if __name__ == "__main__":
-    paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=T)
-    results = prepare_data(path)
+    paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
+    results = prepare_data(paths)
     results.to_csv("/orange/ewhite/b.weinstein/Radogoshi_Sweden/annotations.csv")
