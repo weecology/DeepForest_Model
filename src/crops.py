@@ -165,7 +165,7 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
     
     if dask_client:
         futures = dask_client.map(preprocess.split_raster,
-                                  raster_list,
+                                  path_to_raster = raster_list,
                                   annotations_file=BASE_PATH + dirname + "hand_annotations.csv",
                                   base_dir=BASE_PATH + dirname + "crops/",
                                   patch_size=400,
