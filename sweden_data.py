@@ -89,6 +89,12 @@ if __name__ == "__main__":
     paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
     results = prepare_data(paths)
     results["label"] = "Tree"
+    
+    results = results[results.xmin < results.xmax]
+    results = results[results.ymin < results.ymax]
+    
+    print("Final shape is {}".format(results.shape))
+    
     train_images = np.random.choice(results.image_path.unique(),int(len(results.image_path.unique()) * 0.9))
     train_annotations = results[results.image_path.isin(train_images)]
     test_annotations = results[~(results.image_path.isin(train_images))]

@@ -3,10 +3,10 @@
 #cpu workers for data loaders
 #Dataloaders
 workers: 15
-gpus: 4
+gpus: 3
 distributed_backend: ddp
 
-batch_size: 10
+batch_size: 3
 nms_thresh: 0.15
 score_thresh: 0.25
 train:
