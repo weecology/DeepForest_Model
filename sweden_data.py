@@ -78,6 +78,8 @@ def prepare_data(paths):
     results = pd.concat(results)
     results = results.reset_index(drop=True)
     
+    return results
+    
     
 if __name__ == "__main__":
     paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
