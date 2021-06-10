@@ -78,8 +78,17 @@ def prepare_data(paths):
     results = pd.concat(results)
     results = results.reset_index(drop=True)
     
+    return results
+    
     
 if __name__ == "__main__":
     paths = glob.glob("/orange/ewhite/b.weinstein/Radogoshi_Sweden/*/Annotations/*.xml", recursive=True)
     results = prepare_data(paths)
-    results.to_csv("/orange/ewhite/b.weinstein/Radogoshi_Sweden/annotations.csv")
+    
+    train_images = results.image_path.sample(frac=0.9)
+    train_annotations = results[results.image_path.isin(train_images)]
+    test_annotations = results[~(results.image_path.isin(train_images))]
+    
+    train_annotations.to_csv("/orange/ewhite/b.weinstein/Radogoshi_Sweden/train.csv")
+    test_annotations.to_csv("/orange/ewhite/b.weinstein/Radogoshi_Sweden/test.csv")
+
