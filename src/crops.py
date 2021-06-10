@@ -124,6 +124,7 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
     xmls = glob.glob(BENCHMARK_PATH + "annotations/" + "*.xml")
     annotation_list = []
     for xml in xmls:
+        print(xml)
         #check if it is in the directory
         image_name = "{}.tif".format(os.path.splitext(os.path.basename(xml))[0])
         if os.path.exists(os.path.join(BASE_PATH + dirname + image_name)):
@@ -139,6 +140,7 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
     shps_tifs = glob.glob(BASE_PATH + dirname + "*.tif")
     shp_results = []
     for shp in shps: 
+        print(shp)
         rgb = "{}.tif".format(os.path.splitext(shp)[0])
         shp_df = utilities.shapefile_to_annotations(shp, rgb)
         shp_df = pd.DataFrame(shp_df)        
@@ -164,13 +166,21 @@ def generate_training(BASE_PATH, BENCHMARK_PATH, dirname, dask_client=None, allo
     cropped_annotations = [ ]
     
     if dask_client:
-        futures = dask_client.map(preprocess.split_raster,
-                                  path_to_raster = raster_list,
-                                  annotations_file=BASE_PATH + dirname + "hand_annotations.csv",
-                                  base_dir=BASE_PATH + dirname + "crops/",
-                                  patch_size=400,
-                                  patch_overlap=0.05,
-                                  allow_empty=allow_empty)
+        
+        def split(x):
+            annotations = preprocess.split_raster(
+            
+            annotations_file=BASE_PATH + dirname + "hand_annotations.csv",                                  
+            x,
+            base_dir=BASE_PATH + dirname + "crops/",
+            patch_size=400,
+            patch_overlap=0.05,
+            allow_empty=allow_empty
+            )
+            
+            return annotations
+            
+        futures = dask_client.map(split, raster_list)
         
         wait(futures)
     
