@@ -10,9 +10,9 @@
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err
 #SBATCH --partition=gpu
-#SBATCH --gpus=3
+#SBATCH --gpus=4
 
-source activate deepforest_pytorch
+source activate Zooniverse_pytorch
 #modue load cuda
 cd /home/b.weinstein/DeepForest_Model/
 
