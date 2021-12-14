@@ -26,10 +26,12 @@ except:
     pass
 
 #Create objects
-m = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/retinanet//20210313_094820/pretraining.pl")
+#m = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/retinanet//20210313_094820/pretraining.pl")
 #m = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/retinanet//20210610_175001/hand_annotated.pl")
 
-#m = main.deepforest()
+m = main.deepforest()
+m.use_release()
+m.trainer.validate(m)
 
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=20)
 m.create_trainer(callbacks=[im_callback], logger=comet_logger, profiler="pytorch")
