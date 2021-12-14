@@ -2,6 +2,7 @@
 # conda activate deepforest_pytorch
 import comet_ml
 from pytorch_lightning.loggers import CometLogger
+from pytorch_lightning.profiler import PyTorchProfiler
 from deepforest import main
 from deepforest.callbacks import images_callback
 from datetime import datetime
@@ -31,10 +32,11 @@ except:
 
 m = main.deepforest()
 m.use_release()
-m.trainer.validate(m)
 
 im_callback = images_callback(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=savedir, n=20)
-m.create_trainer(callbacks=[im_callback], logger=comet_logger, profiler="pytorch")
+prof = PyTorchProfiler(dirpath="tmp")
+m.create_trainer(callbacks=[im_callback], logger=comet_logger, profiler=prof)
+m.trainer.validate(m)
 
 comet_logger.experiment.log_parameters(m.config)
 comet_logger.experiment.log_parameters(m.config["train"])
