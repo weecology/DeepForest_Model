@@ -86,7 +86,6 @@ class AliveDeadVanilla(pl.LightningModule):
         
     def forward(self, x):
         output = self.model(x)
-        pred = F.softmax(output)
         
         return pred
     
@@ -107,6 +106,8 @@ class AliveDeadVanilla(pl.LightningModule):
         self.accuracy(outputs, y)
         self.total_accuracy(outputs, y)
         self.precision_metric(outputs, y)
+        
+        return outputs
  
     def validation_epoch_end(self, outputs):
         alive_accuracy, dead_accuracy = self.accuracy.compute()
