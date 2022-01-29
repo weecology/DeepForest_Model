@@ -87,7 +87,7 @@ class AliveDeadVanilla(pl.LightningModule):
     def forward(self, x):
         output = self.model(x)
         
-        return pred
+        return output
     
     def training_step(self, batch, batch_idx):
         x,y = batch
