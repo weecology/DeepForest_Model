@@ -102,12 +102,13 @@ class AliveDeadVanilla(pl.LightningModule):
         outputs = self(x)
         loss = F.cross_entropy(outputs,y)
         self.log("val_loss",loss)        
+        softmax_prob = F.softmax(outputs, dim=1)
         
-        self.accuracy(outputs, y)
-        self.total_accuracy(outputs, y)
-        self.precision_metric(outputs, y)
+        self.accuracy(softmax_prob, y)
+        self.total_accuracy(softmax_prob, y)
+        self.precision_metric(softmax_prob, y)
         
-        return outputs
+        return softmax_prob
  
     def validation_epoch_end(self, outputs):
         alive_accuracy, dead_accuracy = self.accuracy.compute()
