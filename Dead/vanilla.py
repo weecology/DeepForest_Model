@@ -84,10 +84,14 @@ class AliveDeadVanilla(pl.LightningModule):
         self.total_accuracy = torchmetrics.Accuracy()        
         self.precision_metric = torchmetrics.Precision()
         
+        #Softmax temperature
+        self.temperature = torch.nn.Parameter(torch.ones(1))
+        
     def forward(self, x):
         output = self.model(x)
+        logit_output = output/self.temperature
         
-        return output
+        return logit_output
     
     def training_step(self, batch, batch_idx):
         x,y = batch
@@ -118,7 +122,7 @@ class AliveDeadVanilla(pl.LightningModule):
         self.log('val_acc',self.total_accuracy.compute())
         
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=0.00001)
         
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                                     mode='min',
