@@ -56,10 +56,10 @@ class AliveDeadDataset(Dataset):
         # select annotations
         xmin, xmax, ymin, ymax = selected_row[["xmin","xmax","ymin","ymax"]].values.astype(int)
         
-        xmin = np.max([0,xmin-10])
-        xmax = np.min([image.shape[1],xmax+10])
-        ymin = np.max([0,ymin-10])
-        ymax = np.min([image.shape[0],ymax+10])
+        xmin = np.max([0,xmin-5])
+        xmax = np.min([image.shape[1],xmax+5])
+        ymin = np.max([0,ymin-5])
+        ymax = np.min([image.shape[0],ymax+5])
         
         box = image[ymin:ymax, xmin:xmax]
         
@@ -87,7 +87,7 @@ class AliveDeadVanilla(pl.LightningModule):
     def forward(self, x):
         output = self.model(x)
         
-        return logit_output
+        return output
     
     def training_step(self, batch, batch_idx):
         x,y = batch
