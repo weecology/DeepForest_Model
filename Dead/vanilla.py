@@ -83,13 +83,9 @@ class AliveDeadVanilla(pl.LightningModule):
         self.accuracy = torchmetrics.Accuracy(average='none', num_classes=2)      
         self.total_accuracy = torchmetrics.Accuracy()        
         self.precision_metric = torchmetrics.Precision()
-        
-        #Softmax temperature
-        self.temperature = torch.nn.Parameter(torch.ones(1))
-        
+                
     def forward(self, x):
         output = self.model(x)
-        logit_output = output/self.temperature
         
         return logit_output
     
