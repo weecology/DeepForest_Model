@@ -117,7 +117,7 @@ class AliveDeadVanilla(pl.LightningModule):
         self.log('val_acc',self.total_accuracy.compute())
         
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=0.00001)
+        optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
         
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                                     mode='min',
