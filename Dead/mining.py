@@ -55,12 +55,15 @@ def mine_dead(shp, image_path, model_path, savedir):
                 image = image.cuda(0)     
                 prediction = m(image.unsqueeze(0))
                 label = np.argmax(prediction.cpu().detach())
+                score = np.max(prediction.cpu().detach())                
+                
             else:
                 prediction = m(image.unsqueeze(0))
                 label = np.argmax(prediction.cpu().detach())                
+                score = np.max(prediction.cpu().detach())                
             
-            #if Dead, keep
-            if label == 1:
+            #if unsure, keep
+            if score < 0.75:
                 cv2.imwrite("{}/{}_{}.png".format(savedir, basename,index), np.rollaxis(rst,0,3)[:,:,::-1])
                 counter = counter +1
     
