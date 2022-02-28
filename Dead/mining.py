@@ -87,7 +87,7 @@ if __name__ == "__main__":
         for x in site_lists[site][:10]:
             basename = os.path.splitext(os.path.basename(x))[0]
             future = client.submit(mine_dead,
-                          imashpge_path = rgb_dict[basename],
+                          image_path = rgb_dict[basename],
                           shp=x,
                           model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/9192d967fa324eecb8cf2107e4673a00.pl",
                           savedir="/orange/idtrees-collab/mining/")
