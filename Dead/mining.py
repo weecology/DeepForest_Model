@@ -68,6 +68,7 @@ def mine_dead(shp, image_path, model_path, savedir):
 if __name__ == "__main__":
     client = start_cluster.start(gpus=1)
     shpfiles = glob.glob("/orange/idtrees-collab/draped/*.shp")
+    shpfiles = [x for x in shpfiles if "OSBS" in x]
     rgb_pool = glob.glob("/orange/ewhite/NeonData/**/Camera/**/*.tif",recursive=True)
     rgb_dict = {}
     for x in rgb_pool:
@@ -84,12 +85,12 @@ if __name__ == "__main__":
             
     futures = []
     for site in site_lists:
-        for x in site_lists[site][:2]:
+        for x in site_lists[site][:10]:
             basename = os.path.splitext(os.path.basename(x))[0]
             future = client.submit(mine_dead,
                           image_path = rgb_dict[basename],
                           shp=x,
-                          model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/cef3e91d8a9c4e848d85d333233b3c7f.pl",
+                          model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/9192d967fa324eecb8cf2107e4673a00.pl",
                           savedir="/orange/idtrees-collab/mining/")
             futures.append(future)
     
