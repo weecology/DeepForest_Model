@@ -53,15 +53,11 @@ def mine_dead(shp, image_path, model_path, savedir):
             
             if torch.cuda.is_available():
                 image = image.cuda(0)     
-                prediction = m(image.unsqueeze(0))
-                label = np.argmax(prediction.cpu().detach())
-                score = np.max(prediction.cpu().detach())                
-                
-            else:
-                prediction = m(image.unsqueeze(0))
-                label = np.argmax(prediction.cpu().detach())                
-                score = np.max(prediction.cpu().detach())                
-            
+            with torch.no_grad():
+                prediction = m(image.unsqueeze(0)).cpu()
+            label = np.argmax(prediction)
+            score = torch.max(torch.softmax(prediction,1))
+           
             #if unsure, keep
             if score < 0.75:
                 cv2.imwrite("{}/{}_{}.png".format(savedir, basename,index), np.rollaxis(rst,0,3)[:,:,::-1])
@@ -91,7 +87,7 @@ if __name__ == "__main__":
         for x in site_lists[site][:10]:
             basename = os.path.splitext(os.path.basename(x))[0]
             future = client.submit(mine_dead,
-                          image_path = rgb_dict[basename],
+                          imashpge_path = rgb_dict[basename],
                           shp=x,
                           model_path="/orange/idtrees-collab/DeepTreeAttention/Dead/snapshots/9192d967fa324eecb8cf2107e4673a00.pl",
                           savedir="/orange/idtrees-collab/mining/")
